@@ -89,7 +89,7 @@ def send_message(user_id, text_to_send):
 
 def check_time(hour, minute):
     now = datetime.datetime.now().time()
-    if now.hour >= hour and now.minute >= minute:
+    if now.hour == hour and now.minute == minute:
         return True
     else:
         return False
@@ -111,7 +111,7 @@ while True:
             user.recieve_payment_message = False
         tumbler = False
 
-    if weekday == "Monday":
+    if weekday == "Sunday":
         if check_time(14, 00):
             send_paymet_food()
     check_cleaning()
