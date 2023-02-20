@@ -56,16 +56,7 @@ async def show_users(message: Message):
             users = session.query(User).order_by("room_number").all()
             text = ""
             for user in users:
-                if not user.food:
-                    text += f"Имя: {user.name}, комната: {user.room_number}" + "\n"
-                    if user.meal:
-                        text += f"Имя: {user.name}, комната: {user.room_number}" + f"Дни питания {user.days_of_meal}" + "\n"
-                else:
-                    if user.meal:
-                        text += f"Имя: {user.name}, комната: {user.room_number}, не ест: {user.food}" + "\n" + f"Дни питания: {user.days_of_meal}" + "\n"
-                    else:
-                        text += f"Имя: {user.name}, комната: {user.room_number}, не ест: {user.food}" + "\n"
-
+                text += f"комната:{user.room_number} Имя:{user.name}\n"
             await bot.send_message(message.chat.id, text)
 
 
@@ -287,7 +278,7 @@ async def show_feed_back(message: Message):
             for i in feed_backs:
                 user = session.query(User).filter(User.telegram_id == i.chat_id).one()
                 text_to_send += f"{user.name} {user.room_number} фидбэк:{i.text}\n"
-            await bot.send_message(message.chat.id,text_to_send)
+            await bot.send_message(message.chat.id, text_to_send)
         else:
             await bot.send_message(message.chat.id, "Тебе сюда нельзя!")
     else:
