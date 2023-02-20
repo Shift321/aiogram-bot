@@ -153,7 +153,7 @@ async def become_admin(message: Message):
     logging_tg(message.chat.id, message)
     if is_register(message):
         make_state(message.chat.id, "admin")
-        await bot.send_message(message.chat.id, "Введите пароль , его можно получить у Саши🤔")
+        await bot.send_message(message.chat.id, "Введите пароль , его можно получить у Даши🤔")
     else:
         await bot.send_message(message.chat.id, messages['not_registered'])
 
