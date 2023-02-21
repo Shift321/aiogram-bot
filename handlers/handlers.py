@@ -1,5 +1,4 @@
 from datetime import datetime, date, timedelta
-import datetime
 
 from database.db import session
 from models.models import User, Menu, Washes, Wishes, Payments, Cleaning, Food, FeedBack
@@ -175,7 +174,7 @@ async def add_cleaning_handler(message, bot):
         date_of_cleaning = data[0]
         room_number = data[1]
         date_of_cleaning = date_of_cleaning + ".23"
-        date_of_cleaning_obj = datetime.datetime.strptime(date_of_cleaning, '%d.%m.%y').date()
+        date_of_cleaning_obj = datetime.strptime(date_of_cleaning, '%d.%m.%y').date()
         cleaning = Cleaning(date=date_of_cleaning_obj, room_number=room_number)
         session.add(cleaning)
         session.commit()
@@ -255,7 +254,7 @@ async def when_to_eat_handler(message, bot):
 
 
 async def change_text_cleaning_handler(message, bot):
-    now_day = datetime.date.today()
+    now_day = date.today()
     tommorrow = now_day + timedelta(days=1)
     user = session.query(User).filter(User.telegram_id == message.chat.id).one()
     cleaning = session.query(Cleaning).filter(Cleaning.room_number == user.room_number,
