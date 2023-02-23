@@ -126,7 +126,7 @@ async def wash_clothes_handler(message, bot):
                 result = can_add_up + can_add_down
                 if can_add_up == len(all_washes) or can_add_down == len(all_washes) or result == len(all_washes):
                     wash = Washes(time_start=time_start, time_end=time_end, date=date.today(),
-                                  name=user[0].name)
+                                  name=user.name)
                     session.add(wash)
                     session.commit()
                     await bot.send_message(message.chat.id, "Готово")
@@ -170,13 +170,11 @@ async def delete_user_handler(message, bot):
 async def add_cleaning_handler(message, bot):
     cleaning_days = message.text.split(",")
     for one_cleaning in cleaning_days:
-        data = one_cleaning.split()
-        date_of_cleaning = data[0]
-        room_number = data[1]
-        date_of_cleaning = date_of_cleaning + ".23"
-        date_of_cleaning_obj = datetime.strptime(date_of_cleaning, '%d.%m.%y').date()
-        cleaning = Cleaning(date=date_of_cleaning_obj, room_number=room_number)
-        session.add(cleaning)
+        text = one_cleaning.split()
+        week_day = text[0]
+        room_number = text[1]
+        new_cleaning = Cleaning(week_day=week_day, room_number=room_number)
+        session.add(new_cleaning)
         session.commit()
     await bot.send_message(message.chat.id, "Готово")
 
@@ -193,16 +191,16 @@ async def when_to_eat_handler(message, bot):
         if day[0].lower() not in days:
             print(day[0].lower())
             print("wrong day")
-            await bot.send_message(message.chat.id, "Вы ввели что то не так попробуйте еще раз")
+            await bot.send_message(message.chat.id, f"Ошибка в слове {day[0].lower()}")
             return
         if len(day) == 3:
             if day[1] not in meals:
                 print("wrong завтрак")
-                await bot.send_message(message.chat.id, "Вы ввели что то не так попробуйте еще раз")
+                await bot.send_message(message.chat.id, f"Ошибка в слове {day[1]}")
                 return
             if day[2] not in meals:
                 print("wrong обэд")
-                await bot.send_message(message.chat.id, "Вы ввели что то не так попробуйте еще раз")
+                await bot.send_message(message.chat.id, f"ошибка в слове {day[1]}")
                 return
         if len(day) == 2:
             if day[1] not in meals:

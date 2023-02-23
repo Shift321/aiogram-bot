@@ -7,9 +7,9 @@ import requests
 from database.db import session
 from models.models import Payments, User, Cleaning, Food
 from utils.messages import cleaning_time, feed_back
-from utils.utils import make_state
+from utils.utils import make_state, check_week_day
 
-url = f"https://api.telegram.org/bot5888170225:AAFMqClFLAKCz8rNVkhWH1II54Fvy2qyfsQ/sendMessage"
+url = f"https://api.telegram.org/bot6092562304:AAGkoADwWx6LzjnbIdhxKWSW3kjOrJBvm48/sendMessage"
 
 
 def check_payments():
@@ -41,7 +41,9 @@ def make_text_for_cleaning():
 def check_cleaning():
     now_day = datetime.date.today()
     yestarday = now_day + timedelta(days=1)
-    cleanings = session.query(Cleaning).filter(Cleaning.date == yestarday, Cleaning.text == None,
+    weekday = yestarday.strftime("%A")
+    cleanings = session.query(Cleaning).filter(Cleaning.week_day == check_week_day(weekday),
+                                               Cleaning.text == None,
                                                Cleaning.sended == False).all()
     if len(cleanings) == 0:
         return
@@ -60,7 +62,6 @@ def check_cleaning():
 
 def send_paymet_food():
     users = session.query(User).filter(User.recieve_payment_message == False).all()
-    print(users)
     food = session.query(Food).all()
     for user in users:
         summ_to_pay = 0
@@ -72,7 +73,7 @@ def send_paymet_food():
                     summ_to_pay += 20
         print("here")
         send_message(user_id=user.telegram_id,
-                     text_to_send=f"Время платить за еду ! с тебя {summ_to_pay} лари!\n" + feed_back)
+                     text_to_send=f"Время платить за еду ! с тебя {summ_to_pay}\n" + feed_back)
         make_state(user.telegram_id, "get_feedback")
         user.recieve_payment_message = True
         session.flush()
@@ -87,6 +88,14 @@ def send_message(user_id, text_to_send):
     response = requests.post(url, json=data)
 
 
+def make_sended_false():
+    cleanings = session.query(Cleaning).all()
+    for i in cleanings:
+        i.sended = False
+        session.flush()
+        session.commit()
+
+
 def check_time(hour, minute):
     now = datetime.datetime.now().time()
     if now.hour == hour and now.minute == minute:
@@ -98,9 +107,14 @@ def check_time(hour, minute):
 while True:
     today = datetime.datetime.now().date()
     weekday = today.strftime("%A")
+    done_this_week = False
+    if weekday == "Monday" and done_this_week == False:
+        make_sended_false()
+        done_this_week = True
     once = True
     tumbler = False
     if weekday == "Tuesday":
+        done_this_week = True
         once = True
     if weekday == "Monday" and once:
         once = False
@@ -114,6 +128,8 @@ while True:
     if weekday == "Sunday":
         if check_time(14, 00):
             send_paymet_food()
-    check_cleaning()
-    check_payments()
+    if check_time(11, 00):
+        check_payments()
+    if check_time(12, 00):
+        check_cleaning()
     time.sleep(5)

@@ -12,7 +12,7 @@ from models.models import User, Menu, Washes, Food, State, Cleaning, FeedBack
 from utils.messages import messages, command_list, admin_command_list, meal_text
 from utils.utils import logging_tg, is_register, check_week_day, make_state
 
-bot = Bot("5888170225:AAFMqClFLAKCz8rNVkhWH1II54Fvy2qyfsQ")
+bot = Bot("6092562304:AAGkoADwWx6LzjnbIdhxKWSW3kjOrJBvm48")
 dispatcher = Dispatcher(bot)
 Base.metadata.create_all(engine)
 

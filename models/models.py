@@ -14,7 +14,7 @@ class User(Base):
     food: str = Column(String)
     is_admin: bool = Column(Boolean, default=False)
     days_of_meal: str = Column(String)
-    recieve_payment_message: bool = Column(Boolean,default=False)
+    recieve_payment_message: bool = Column(Boolean, default=False)
 
 
 class Menu(Base):
@@ -59,7 +59,7 @@ class Cleaning(Base):
     text: str = Column(String)
     room_number: int = Column(Integer)
     sended: bool = Column(Boolean, default=False)
-
+    week_day: str = Column(String)
 
 class Food(Base):
     __tablename__ = "food"
