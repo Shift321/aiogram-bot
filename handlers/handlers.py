@@ -108,7 +108,7 @@ async def wash_clothes_handler(message, bot):
             user = session.query(User).filter(User.telegram_id == message.chat.id).one()
             can_add_up = 0
             can_add_down = 0
-            all_washes = session.query(Washes).all()
+            all_washes = session.query(Washes).filter(Washes.date == date.today()).all()
             if len(all_washes) == 0:
                 wash = Washes(time_start=time_start, time_end=time_end, date=date.today(),
                               name=user.name)
@@ -130,7 +130,6 @@ async def wash_clothes_handler(message, bot):
                     session.add(wash)
                     session.commit()
                     await bot.send_message(message.chat.id, "Готово")
-
                     make_state(message.chat.id, "start")
                 else:
                     await bot.send_message(message.chat.id, "Данное время занято введите другое время")
