@@ -132,7 +132,7 @@ async def wash_clothes(message: Message):
         for wash in washes:
             time_start = str(wash.time_start)[:5]
             time_end = str(wash.time_end)[:5]
-            text += f"{wash.name} {time_start}-{time_end}" + "\n"
+            text += f"{wash.name} {time_start}-{time_end} ДАТА СТИРКИ:{wash.date}" + "\n"
         text += "Введите время желаемой стирки в формате 15:00-16:00 "
         await bot.send_message(message.chat.id, text)
     else:

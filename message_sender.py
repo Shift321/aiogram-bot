@@ -19,7 +19,7 @@ def check_payments():
     else:
         for payment in payments:
             user = session.query(User).filter(User.id == payment.user_id).one()
-            send_message(user.telegram_id, f"Привет! Пришло время оплатить жильё: {payment.sum_of_pay} лари")
+            send_message(user.telegram_id, f"Привет! Пришло время оплатить жильё: {payment.sum_of_pay}")
             session.delete(payment)
             session.flush()
             session.commit()
