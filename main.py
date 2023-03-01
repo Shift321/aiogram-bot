@@ -346,9 +346,9 @@ async def show_who_eating(message: Message):
             for i in eat_dinner:
                 user = session.query(User).filter(User.id == i.user_id).one()
                 if not user.food:
-                    message_to_send_dinner += f"{user.name} {user.room_number}"
+                    message_to_send_dinner += f"{user.name} {user.room_number}\n"
                 else:
-                    message_to_send_dinner += f"{user.name} {user.room_number} не ест {user.food}"
+                    message_to_send_dinner += f"{user.name} {user.room_number} не ест {user.food}\n"
             message_to_send = message_to_send_breakfast + message_to_send_dinner
             await bot.send_message(message.chat.id, message_to_send)
     else:
