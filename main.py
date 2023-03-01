@@ -337,9 +337,9 @@ async def show_who_eating(message: Message):
             for i in eat:
                 user = session.query(User).filter(User.id == i.user_id).one()
                 if not user.food:
-                    message_to_send_breakfast += f"{user.name} {user.room_number}"
+                    message_to_send_breakfast += f"{user.name} {user.room_number}\n"
                 else:
-                    message_to_send_breakfast += f"{user.name} {user.room_number} не ест {user.food}"
+                    message_to_send_breakfast += f"{user.name} {user.room_number} не ест {user.food}\n"
 
             eat_dinner = session.query(Food).filter(Food.name_of_week_day == rus_week_day, Food.dinner == True).all()
             message_to_send_dinner = f"\n\nКто ест сегодня обед : \n\n{len(eat_dinner)} порций\n\n"
