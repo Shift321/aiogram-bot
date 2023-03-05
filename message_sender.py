@@ -129,7 +129,7 @@ while True:
             user.recieve_payment_message = False
         tumbler = False
     if weekday == "Sunday":
-        if check_time(14, 00):
+        if check_time(9, 00):
             send_paymet_food()
     if check_time(11, 00):
         check_payments()

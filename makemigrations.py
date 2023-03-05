@@ -8,4 +8,5 @@ db_meta = MetaData(bind=db_engine)
 
 table = Table('client', db_meta)
 col = Column('cleaning_prefers', String)
+table.create()
 col.create(table)

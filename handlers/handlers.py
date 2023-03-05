@@ -53,7 +53,9 @@ async def post_menu(message, bot):
         menu[0].menu_text = message.text
         session.flush()
         session.commit()
-
+    users = session.query(User).all()
+    for user in users:
+        await bot.send_message(user.telegram_id,"Меню обновлено, запишись на питание!")
     make_state(message.chat.id, "start")
     await bot.send_message(message.chat.id, "Меню добавленно🥘")
 
