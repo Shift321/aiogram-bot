@@ -352,6 +352,8 @@ async def show_who_eating_for_week_handler():
                 sunday_dinner_counter += 1
             user = session.query(User).filter(User.id == i.user_id).one()
             sunday_text += f"Имя:{user.name},{breakfast if i.breakfast == True else empty} {dinner if i.dinner == True else empty}\n"
-    text_to_send += monday_text + monday_counter + "\n" + tueday_text + "\n" + wednsedey_text + "\n" + thurdsday_text + "\n" + friday_text + "\n" + saturday_text + "\n" + sunday_text
+
+    print(monday_dinner_counter)
+    text_to_send += monday_text + "\n" + tueday_text + "\n" + wednsedey_text + "\n" + thurdsday_text + "\n" + friday_text + "\n" + saturday_text + "\n" + sunday_text
 
     return text_to_send
