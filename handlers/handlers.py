@@ -276,39 +276,81 @@ async def get_feed_back_handler(message, bot):
 
 async def show_who_eating_for_week_handler():
     text_to_send = "Питающиеся на неделю:\n\n"
-    monday_text = "Понедельник:\n\n"
-    tueday_text = "Вторник:\n\n"
-    wednsedey_text = "Среда:\n\n"
-    thurdsday_text = "Четверг:\n\n"
-    friday_text = "Пятница:\n\n"
-    saturday_text = "Суббота:\n\n"
-    sunday_text = "Воскресенье:\n\n"
+    moday_breakfast_counter = 0
+    monday_dinner_counter = 0
+    monday_text = f"Понедельник:\n\nКоличество завтраков:{moday_breakfast_counter}\nКоличество обедов:{monday_dinner_counter}\n\n"
+    tueday_breakfast_counter = 0
+    tueday_dinner_counter = 0
+    tueday_text = f"Вторник:\n\nКоличество завтраков:{tueday_breakfast_counter}\nКоличество обедов:{tueday_dinner_counter}\n\n"
+    wednsedey_breakfast_counter = 0
+    wednsedey_dinner_counter = 0
+    wednsedey_text = f"Среда:\n\nКоличество завтраков:{wednsedey_breakfast_counter}\nКоличество обедов:{wednsedey_dinner_counter}\n\n"
+    thurdsday_breakfast_counter = 0
+    thurdsday_dinner_counter = 0
+    thurdsday_text = f"Четверг:\n\nКоличество завтраков:{thurdsday_breakfast_counter}\nКоличество обедов:{thurdsday_dinner_counter}\n\n"
+    friday_breakfast_counter = 0
+    friday_dinner_counter = 0
+    friday_text = f"Пятница:\n\nКоличество завтраков:{friday_breakfast_counter}\nКоличество обедов:{friday_dinner_counter}\n\n"
+    saturday_breakfast_counter = 0
+    saturday_dinner_counter = 0
+    saturday_text = f"Суббота:\n\nКоличество завтраков:{saturday_breakfast_counter}\nКоличество обедов:{saturday_dinner_counter}\n\n"
+    sunday_breakfast_counter = 0
+    sunday_dinner_counter = 0
+    sunday_text = f"Воскресенье:\n\nКоличество завтраков:{sunday_breakfast_counter}\nКоличество обедов:{sunday_dinner_counter}\n\n"
     empty = ""
     breakfast = "завтрак"
     dinner = "обед"
     all_food = session.query(Food).all()
     for i in all_food:
         if i.name_of_week_day == "понедельник":
+            if i.breakfast == True:
+                moday_breakfast_counter += 1
+            if i.dinner == True:
+                monday_dinner_counter += 1
             user = session.query(User).filter(User.id == i.user_id).one()
             monday_text += f"Имя:{user.name},{breakfast if i.breakfast == True else empty} {dinner if i.dinner == True else empty}\n"
         if i.name_of_week_day == "вторник":
+            if i.breakfast == True:
+                tueday_breakfast_counter += 1
+            if i.dinner == True:
+                tueday_dinner_counter += 1
             user = session.query(User).filter(User.id == i.user_id).one()
             tueday_text += f"Имя:{user.name},{breakfast if i.breakfast == True else empty} {dinner if i.dinner == True else empty}\n"
-        if i.name_of_week_day == "cреда":
+        if i.name_of_week_day == "среда":
+            if i.breakfast == True:
+                wednsedey_breakfast_counter += 1
+            if i.dinner == True:
+                wednsedey_dinner_counter += 1
             user = session.query(User).filter(User.id == i.user_id).one()
             wednsedey_text += f"Имя:{user.name},{breakfast if i.breakfast == True else empty} {dinner if i.dinner == True else empty}\n"
         if i.name_of_week_day == "четверг":
+            if i.breakfast == True:
+                thurdsday_breakfast_counter += 1
+            if i.dinner == True:
+                thurdsday_dinner_counter += 1
             user = session.query(User).filter(User.id == i.user_id).one()
             thurdsday_text += f"Имя:{user.name},{breakfast if i.breakfast == True else empty} {dinner if i.dinner == True else empty}\n"
         if i.name_of_week_day == "пятница":
+            if i.breakfast == True:
+                friday_breakfast_counter += 1
+            if i.dinner == True:
+                friday_dinner_counter += 1
             user = session.query(User).filter(User.id == i.user_id).one()
             friday_text += f"Имя:{user.name},{breakfast if i.breakfast == True else empty} {dinner if i.dinner == True else empty}\n"
         if i.name_of_week_day == "суббота":
+            if i.breakfast == True:
+                saturday_breakfast_counter += 1
+            if i.dinner == True:
+                saturday_dinner_counter += 1
             user = session.query(User).filter(User.id == i.user_id).one()
             saturday_text += f"Имя:{user.name},{breakfast if i.breakfast == True else empty} {dinner if i.dinner == True else empty}\n"
         if i.name_of_week_day == "воскресенье":
+            if i.breakfast == True:
+                sunday_breakfast_counter += 1
+            if i.dinner == True:
+                sunday_dinner_counter += 1
             user = session.query(User).filter(User.id == i.user_id).one()
             sunday_text += f"Имя:{user.name},{breakfast if i.breakfast == True else empty} {dinner if i.dinner == True else empty}\n"
-    text_to_send += monday_text + tueday_text + wednsedey_text + thurdsday_text + friday_text + saturday_text + sunday_text
+    text_to_send += monday_text + "\n" + tueday_text + "\n" + wednsedey_text + "\n" + thurdsday_text + "\n" + friday_text + "\n" + saturday_text + "\n" + sunday_text
 
     return text_to_send
