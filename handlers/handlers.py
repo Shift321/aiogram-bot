@@ -276,9 +276,10 @@ async def get_feed_back_handler(message, bot):
 
 async def show_who_eating_for_week_handler():
     text_to_send = "Питающиеся на неделю:\n\n"
-    moday_breakfast_counter = 0
+    monday_breakfast_counter = 0
     monday_dinner_counter = 0
-    monday_text = f"Понедельник:\n\nКоличество завтраков:{moday_breakfast_counter}\nКоличество обедов:{monday_dinner_counter}\n\n"
+    monday_text = f"Понедельник:\n\n"
+    monday_counter = f"Количество завтраков:{monday_breakfast_counter}\nКоличество обедов:{monday_dinner_counter}\n\n"
     tueday_breakfast_counter = 0
     tueday_dinner_counter = 0
     tueday_text = f"Вторник:\n\nКоличество завтраков:{tueday_breakfast_counter}\nКоличество обедов:{tueday_dinner_counter}\n\n"
@@ -304,7 +305,7 @@ async def show_who_eating_for_week_handler():
     for i in all_food:
         if i.name_of_week_day == "понедельник":
             if i.breakfast == True:
-                moday_breakfast_counter += 1
+                monday_breakfast_counter += 1
             if i.dinner == True:
                 monday_dinner_counter += 1
             user = session.query(User).filter(User.id == i.user_id).one()
@@ -351,6 +352,6 @@ async def show_who_eating_for_week_handler():
                 sunday_dinner_counter += 1
             user = session.query(User).filter(User.id == i.user_id).one()
             sunday_text += f"Имя:{user.name},{breakfast if i.breakfast == True else empty} {dinner if i.dinner == True else empty}\n"
-    text_to_send += monday_text + "\n" + tueday_text + "\n" + wednsedey_text + "\n" + thurdsday_text + "\n" + friday_text + "\n" + saturday_text + "\n" + sunday_text
+    text_to_send += monday_text + monday_counter + "\n" + tueday_text + "\n" + wednsedey_text + "\n" + thurdsday_text + "\n" + friday_text + "\n" + saturday_text + "\n" + sunday_text
 
     return text_to_send
