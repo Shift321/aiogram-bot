@@ -2,7 +2,7 @@ from datetime import datetime, date, timedelta
 
 from database.db import session
 from models.models import User, Menu, Washes, Wishes, Payments, Cleaning, Food, FeedBack
-from utils.utils import make_state
+from utils.utils import make_state, check_week_day
 
 
 async def register(message, bot):
@@ -167,14 +167,22 @@ async def delete_user_handler(message, bot):
 
 
 async def add_cleaning_handler(message, bot):
-    cleaning_days = message.text.split(",")
+    # понедельник 203,204,205; вторник 101,102,103;
+    cleaning_days = message.text.split(";")
     for one_cleaning in cleaning_days:
         text = one_cleaning.split()
+        print(text)
         week_day = text[0]
         room_number = text[1]
-        new_cleaning = Cleaning(week_day=week_day, room_number=room_number)
-        session.add(new_cleaning)
-        session.commit()
+        cleaning = session.query(Cleaning).filter(Cleaning.week_day == week_day.lower()).all()
+        if len(cleaning) == 0:
+            new_cleaning = Cleaning(week_day=week_day.lower(), room_number=room_number)
+            session.add(new_cleaning)
+            session.commit()
+        else:
+            cleaning[0].room_number = room_number
+            session.flush()
+            session.commit()
     await bot.send_message(message.chat.id, "Готово")
 
 
@@ -251,12 +259,8 @@ async def when_to_eat_handler(message, bot):
 
 
 async def change_text_cleaning_handler(message, bot):
-    now_day = date.today()
-    tommorrow = now_day + timedelta(days=1)
     user = session.query(User).filter(User.telegram_id == message.chat.id).one()
-    cleaning = session.query(Cleaning).filter(Cleaning.room_number == user.room_number,
-                                              Cleaning.date == tommorrow).one()
-    cleaning.text = message.text
+    user.cleaning_prefers = message.text
     session.flush()
     session.commit()
     await bot.send_message(message.chat.id, "Готово Ваша просьба записана")
@@ -268,3 +272,43 @@ async def get_feed_back_handler(message, bot):
     session.add(feed_back)
     session.commit()
     await bot.send_message(message.chat.id, "Ваш фидбэк записан")
+
+
+async def show_who_eating_for_week_handler(message, bot):
+    text_to_send = "Питающиеся на неделю:\n\n"
+    monday_text = "Понедельник:\n\n"
+    tueday_text = "Вторник:\n\n"
+    wednsedey_text = "Среда:\n\n"
+    thurdsday_text = "Четверг:\n\n"
+    friday_text = "Пятница:\n\n"
+    saturday_text = "Суббота:\n\n"
+    sunday_text = "Воскресенье:\n\n"
+    empty = ""
+    breakfast = "завтрак"
+    dinner = "обед"
+    all_food = session.query(Food).all()
+    for i in all_food:
+        if i.name_of_week_day == "понедельник":
+            user = session.query(User).filter(User.id == i.user_id).one()
+            monday_text += f"Имя:{user.name},{breakfast if i.breakfast == True else empty} {dinner if i.dinner == True else empty}\n"
+        if i.name_of_week_day == "вторник":
+            user = session.query(User).filter(User.id == i.user_id).one()
+            tueday_text += f"Имя:{user.name},{breakfast if i.breakfast == True else empty} {dinner if i.dinner == True else empty}\n"
+        if i.name_of_week_day == "cреда":
+            user = session.query(User).filter(User.id == i.user_id).one()
+            wednsedey_text += f"Имя:{user.name},{breakfast if i.breakfast == True else empty} {dinner if i.dinner == True else empty}\n"
+        if i.name_of_week_day == "четверг":
+            user = session.query(User).filter(User.id == i.user_id).one()
+            thurdsday_text += f"Имя:{user.name},{breakfast if i.breakfast == True else empty} {dinner if i.dinner == True else empty}\n"
+        if i.name_of_week_day == "пятница":
+            user = session.query(User).filter(User.id == i.user_id).one()
+            friday_text += f"Имя:{user.name},{breakfast if i.breakfast == True else empty} {dinner if i.dinner == True else empty}\n"
+        if i.name_of_week_day == "суббота":
+            user = session.query(User).filter(User.id == i.user_id).one()
+            saturday_text += f"Имя:{user.name},{breakfast if i.breakfast == True else empty} {dinner if i.dinner == True else empty}\n"
+        if i.name_of_week_day == "воскресенье":
+            user = session.query(User).filter(User.id == i.user_id).one()
+            sunday_text += f"Имя:{user.name},{breakfast if i.breakfast == True else empty} {dinner if i.dinner == True else empty}\n"
+    text_to_send += monday_text + tueday_text + wednsedey_text + thurdsday_text + friday_text + saturday_text + sunday_text
+
+    await bot.send_message(message.chat.id, text_to_send)

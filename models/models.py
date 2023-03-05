@@ -15,6 +15,7 @@ class User(Base):
     is_admin: bool = Column(Boolean, default=False)
     days_of_meal: str = Column(String)
     recieve_payment_message: bool = Column(Boolean, default=False)
+    cleaning_prefers: str = Column(String)
 
 
 class Menu(Base):
@@ -60,6 +61,7 @@ class Cleaning(Base):
     room_number: int = Column(Integer)
     sended: bool = Column(Boolean, default=False)
     week_day: str = Column(String)
+
 
 class Food(Base):
     __tablename__ = "food"

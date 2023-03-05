@@ -43,21 +43,22 @@ def check_cleaning():
     yestarday = now_day + timedelta(days=1)
     weekday = yestarday.strftime("%A")
     cleanings = session.query(Cleaning).filter(Cleaning.week_day == check_week_day(weekday),
-                                               Cleaning.text == None,
                                                Cleaning.sended == False).all()
     if len(cleanings) == 0:
         return
     else:
         for cleaning in cleanings:
-            users = session.query(User).filter(User.room_number == cleaning.room_number).all()
-            for user in users:
-                make_state(user.telegram_id, "added_cleaning")
-                send_message(user_id=user.telegram_id, text_to_send=cleaning_time)
-                if make_text_for_cleaning() is not None:
-                    send_message(user_id=user.telegram_id, text_to_send=make_text_for_cleaning())
-                cleaning.sended = True
-                session.flush()
-                session.commit()
+            for room_number in cleaning.room_number.split(","):
+                print(room_number)
+                users = session.query(User).filter(User.room_number == room_number).all()
+                for user in users:
+                    make_state(user.telegram_id, "added_cleaning")
+                    send_message(user_id=user.telegram_id, text_to_send=cleaning_time)
+                    if make_text_for_cleaning() is not None:
+                        send_message(user_id=user.telegram_id, text_to_send=make_text_for_cleaning())
+                    cleaning.sended = True
+                    session.flush()
+                    session.commit()
 
 
 def send_paymet_food():
@@ -72,12 +73,15 @@ def send_paymet_food():
                 if i.dinner:
                     summ_to_pay += 20
         print("here")
-        send_message(user_id=user.telegram_id,
-                     text_to_send=f"Время платить за еду ! с тебя {summ_to_pay}\n" + feed_back)
-        make_state(user.telegram_id, "get_feedback")
-        user.recieve_payment_message = True
-        session.flush()
-        session.commit()
+        if summ_to_pay == 0:
+            return
+        else:
+            send_message(user_id=user.telegram_id,
+                         text_to_send=f"Время платить за еду ! с тебя {summ_to_pay}\n" + feed_back)
+            make_state(user.telegram_id, "get_feedback")
+            user.recieve_payment_message = True
+            session.flush()
+            session.commit()
 
 
 def send_message(user_id, text_to_send):
@@ -124,7 +128,6 @@ while True:
         for user in users:
             user.recieve_payment_message = False
         tumbler = False
-
     if weekday == "Sunday":
         if check_time(14, 00):
             send_paymet_food()

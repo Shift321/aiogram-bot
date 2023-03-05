@@ -6,6 +6,6 @@ from database.db import engine
 db_engine = engine
 db_meta = MetaData(bind=db_engine)
 
-table = Table('cleaning', db_meta)
-col = Column('week_day', String)
+table = Table('client', db_meta)
+col = Column('cleaning_prefers', String)
 col.create(table)

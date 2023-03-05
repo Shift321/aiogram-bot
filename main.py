@@ -6,7 +6,7 @@ from aiogram.types import Message
 from database.db import Base, engine, session
 from handlers.handlers import register, admin, food, post_menu, time_to_pay_handler, wash_clothes_handler, \
     want_to_add_wish, list_of_wish, delete_user_handler, add_cleaning_handler, when_to_eat_handler, \
-    change_text_cleaning_handler, get_feed_back_handler
+    change_text_cleaning_handler, get_feed_back_handler, show_who_eating_for_week_handler
 
 from models.models import User, Menu, Washes, Food, State, Cleaning, FeedBack
 from utils.messages import messages, command_list, admin_command_list, meal_text
@@ -67,7 +67,7 @@ async def add_cleaning(message: Message):
         user = session.query(User).filter(User.telegram_id == message.chat.id, User.is_admin == True).all()
         if len(user) != 0:
             await bot.send_message(message.chat.id,
-                                   "Введите дату и номер комнаты для уборки")
+                                   "Введите день недели и номер комнаты для уборки")
             make_state(message.chat.id, "add_cleaning")
         else:
             await bot.send_message(message.chat.id, "Тебе сюда нельзя 🧐")
@@ -78,17 +78,23 @@ async def add_cleaning(message: Message):
 @dispatcher.message_handler(commands=['show_cleaning'])
 async def show_cleanings(message: Message):
     logging_tg(message.chat.id, message)
+    now_day = datetime.date.today() + datetime.timedelta(days=1)
+    weekday = now_day.strftime("%A")
     if is_register(message):
-        cleanings = session.query(Cleaning).filter(Cleaning.date == datetime.date.today()).all()
+        cleanings = session.query(Cleaning).filter(Cleaning.week_day == check_week_day(weekday)).all()
         text_to_send = "Просьбы об уборке сегодня:\n\n"
         if len(cleanings) == 0:
             text_to_send = "На сегодня нет уборок"
         else:
             for cleaning in cleanings:
-                if cleaning.text is None:
-                    text_to_send += f"Комната:{cleaning.room_number} просьба: нет предпочтений\n"
-                else:
-                    text_to_send += f"Комната:{cleaning.room_number} просьба: {cleaning.text}\n"
+                for room_number in cleaning.room_number.split(","):
+                    users = session.query(User).filter(User.room_number == room_number).all()
+                    for i in users:
+                        if i.cleaning_prefers is not None:
+                            text_to_send += f"Комната: {room_number} предпочтения:{i.cleaning_prefers}\n"
+                            break
+                        else:
+                            text_to_send += f"Комната: {room_number} предпочтений нет\n"
         await bot.send_message(message.chat.id, text_to_send)
     else:
         await bot.send_message(message.chat.id, messages['not_registered'])
@@ -355,6 +361,18 @@ async def show_who_eating(message: Message):
         await bot.send_message(message.chat.id, messages['not_registered'])
 
 
+@dispatcher.message_handler(commands=['show_who_eating_for_week'])
+async def show_who_eating_for_week(message: Message):
+    if is_register(message):
+        user = session.query(User).filter(User.is_admin == True, User.telegram_id == message.chat.id).all()
+        if len(user) == 0:
+            await bot.send_message(message.chat.id, "Тебе сюда нельзя 🧐")
+        else:
+            make_state(message.chat.id, "show_who_eating_for_week")
+    else:
+        await bot.send_message(message.chat.id, messages['not_registered'])
+
+
 @dispatcher.message_handler()
 async def add_user(message: Message):
     user_state = session.query(State).filter(State.chat_id == message.chat.id).all()
@@ -387,6 +405,8 @@ async def add_user(message: Message):
             await want_to_add_wish(message, bot)
         if user_state[0].state == "delete_user":
             await delete_user_handler(message, bot)
+        if user_state[0].state == "show_who_eating_for_week":
+            await show_who_eating_for_week_handler(message, bot)
 
 
 executor.start_polling(dispatcher)

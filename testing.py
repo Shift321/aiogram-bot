@@ -1,7 +1,7 @@
-import datetime
-from datetime import timedelta
-today = datetime.datetime.now().date() + timedelta(days=6)
-weekday = today.strftime("%A")
-print(weekday)
 
+i_breakfast = False
+empty = ""
+breakfast = "завтрак"
+strinx = f"Имя:Sasha,{breakfast if i_breakfast == True else empty}"
 
+print(strinx)
