@@ -279,25 +279,24 @@ async def show_who_eating_for_week_handler():
     monday_breakfast_counter = 0
     monday_dinner_counter = 0
     monday_text = f"Понедельник:\n\n"
-
     tueday_breakfast_counter = 0
     tueday_dinner_counter = 0
-    tueday_text = f"Вторник:\n\nКоличество завтраков:{tueday_breakfast_counter}\nКоличество обедов:{tueday_dinner_counter}\n\n"
+    tueday_text = f"Вторник:\n\n"
     wednsedey_breakfast_counter = 0
     wednsedey_dinner_counter = 0
-    wednsedey_text = f"Среда:\n\nКоличество завтраков:{wednsedey_breakfast_counter}\nКоличество обедов:{wednsedey_dinner_counter}\n\n"
+    wednsedey_text = f"Среда:\n\n"
     thurdsday_breakfast_counter = 0
     thurdsday_dinner_counter = 0
-    thurdsday_text = f"Четверг:\n\nКоличество завтраков:{thurdsday_breakfast_counter}\nКоличество обедов:{thurdsday_dinner_counter}\n\n"
+    thurdsday_text = f"Четверг:\n\n"
     friday_breakfast_counter = 0
     friday_dinner_counter = 0
-    friday_text = f"Пятница:\n\nКоличество завтраков:{friday_breakfast_counter}\nКоличество обедов:{friday_dinner_counter}\n\n"
+    friday_text = f"Пятница:\n\n"
     saturday_breakfast_counter = 0
     saturday_dinner_counter = 0
-    saturday_text = f"Суббота:\n\nКоличество завтраков:{saturday_breakfast_counter}\nКоличество обедов:{saturday_dinner_counter}\n\n"
+    saturday_text = f"Суббота:\n\n"
     sunday_breakfast_counter = 0
     sunday_dinner_counter = 0
-    sunday_text = f"Воскресенье:\n\nКоличество завтраков:{sunday_breakfast_counter}\nКоличество обедов:{sunday_dinner_counter}\n\n"
+    sunday_text = f"Воскресенье:\n\n"
     empty = ""
     breakfast = "завтрак"
     dinner = "обед"
@@ -353,6 +352,12 @@ async def show_who_eating_for_week_handler():
             user = session.query(User).filter(User.id == i.user_id).one()
             sunday_text += f"Имя:{user.name},{breakfast if i.breakfast == True else empty} {dinner if i.dinner == True else empty}\n"
     monday_counter = f"\n\nКоличество завтраков:{monday_breakfast_counter}\nКоличество обедов:{monday_dinner_counter}\n\n"
-    text_to_send += monday_text+ monday_counter + "\n" + tueday_text + "\n" + wednsedey_text + "\n" + thurdsday_text + "\n" + friday_text + "\n" + saturday_text + "\n" + sunday_text
+    tueday_counter = f"\n\nКоличество завтраков:{tueday_breakfast_counter}\nКоличество обедов:{tueday_dinner_counter}\n\n"
+    wednsedey_counter = f"\n\nКоличество завтраков:{wednsedey_breakfast_counter}\nКоличество обедов:{wednsedey_dinner_counter}\n\n"
+    thurdsday_counter = f"\n\nКоличество завтраков:{thurdsday_breakfast_counter}\nКоличество обедов:{thurdsday_dinner_counter}\n\n"
+    friday_counter = f"\n\nКоличество завтраков:{friday_breakfast_counter}\nКоличество обедов:{friday_dinner_counter}\n\n"
+    saturday_counter = f"\n\nКоличество завтраков:{saturday_breakfast_counter}\nКоличество обедов:{saturday_dinner_counter}\n\n"
+    sunday_counter = f"\n\nКоличество завтраков:{sunday_breakfast_counter}\nКоличество обедов:{sunday_dinner_counter}\n\n"
+    text_to_send += monday_text + monday_counter + "\n" + tueday_text + tueday_counter + "\n" + wednsedey_text + wednsedey_counter + "\n" + thurdsday_text + thurdsday_counter + "\n" + friday_text + friday_counter + "\n" + saturday_text + saturday_counter + "\n" + sunday_text + sunday_counter
 
     return text_to_send
