@@ -368,7 +368,7 @@ async def show_who_eating_for_week(message: Message):
         if len(user) == 0:
             await bot.send_message(message.chat.id, "Тебе сюда нельзя 🧐")
         else:
-            make_state(message.chat.id, "show_who_eating_for_week")
+            await bot.send_message(message.chat.id, await show_who_eating_for_week_handler())
     else:
         await bot.send_message(message.chat.id, messages['not_registered'])
 
@@ -405,8 +405,6 @@ async def add_user(message: Message):
             await want_to_add_wish(message, bot)
         if user_state[0].state == "delete_user":
             await delete_user_handler(message, bot)
-        if user_state[0].state == "show_who_eating_for_week":
-            await show_who_eating_for_week_handler(message, bot)
 
 
 executor.start_polling(dispatcher)

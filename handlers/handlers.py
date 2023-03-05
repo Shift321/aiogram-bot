@@ -274,7 +274,7 @@ async def get_feed_back_handler(message, bot):
     await bot.send_message(message.chat.id, "Ваш фидбэк записан")
 
 
-async def show_who_eating_for_week_handler(message, bot):
+async def show_who_eating_for_week_handler():
     text_to_send = "Питающиеся на неделю:\n\n"
     monday_text = "Понедельник:\n\n"
     tueday_text = "Вторник:\n\n"
@@ -311,4 +311,4 @@ async def show_who_eating_for_week_handler(message, bot):
             sunday_text += f"Имя:{user.name},{breakfast if i.breakfast == True else empty} {dinner if i.dinner == True else empty}\n"
     text_to_send += monday_text + tueday_text + wednsedey_text + thurdsday_text + friday_text + saturday_text + sunday_text
 
-    await bot.send_message(message.chat.id, text_to_send)
+    return text_to_send
