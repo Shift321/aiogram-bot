@@ -2,11 +2,12 @@ from datetime import date
 import datetime
 from aiogram import Bot, executor, Dispatcher
 from aiogram.types import Message
+from sqlalchemy import func
 
 from database.db import Base, engine, session
 from handlers.handlers import register, admin, food, post_menu, time_to_pay_handler, wash_clothes_handler, \
     want_to_add_wish, list_of_wish, delete_user_handler, add_cleaning_handler, when_to_eat_handler, \
-    change_text_cleaning_handler, get_feed_back_handler, show_who_eating_for_week_handler
+    change_text_cleaning_handler, get_feed_back_handler, show_who_eating_for_week_handler, birth_insert_handler
 
 from models.models import User, Menu, Washes, Food, State, Cleaning, FeedBack
 from utils.messages import messages, command_list, admin_command_list, meal_text
@@ -27,11 +28,11 @@ async def hello(message: Message):
 
 @dispatcher.message_handler(commands=['send_message_to_all'])
 async def send_to_all(message: Message):
-    all_eat = session.query(Food).all()
-    for i in all_eat:
-        user = session.query(User).filter(User.id == i.user_id).one()
+    users = session.query(User).all()
+    for user in users:
         await bot.send_message(user.telegram_id,
-                               "Привет! Перезапишись пожалуйста на питанеие я произвел технические работы ,теперь все должно работать хорошо команда /meal. Если после перезаписи бот не написал готово напиши об этом пожалуйста сюда @shift123(Саша)")
+                               "Привет! Введи пожалуйста свою дату рождения! Это нужно чтобы мы знали , когда у вас день рождения.")
+        make_state(user.telegram_id, "birth_insert")
     await bot.send_message(message.chat.id, "Готово")
 
 
@@ -184,7 +185,7 @@ async def register_user(message: Message):
     if not is_register(message):
 
         make_state(message.chat.id, "register")
-        await bot.send_message(message.chat.id, "Введи cвоё имя, номер комнаты и пароль через пробел!😼")
+        await bot.send_message(message.chat.id, "Введи cвоё имя, номер комнаты, пароль и Дату рождения в формате (07.03.1999) через пробел!😼")
     else:
         await bot.send_message(message.chat.id, "Вы уже зарегистрированы!😼")
 
@@ -383,6 +384,18 @@ async def show_who_eating_for_week(message: Message):
         await bot.send_message(message.chat.id, messages['not_registered'])
 
 
+@dispatcher.message_handler(commands=['show_birth'])
+async def show_birth(message: Message):
+    if is_register(message):
+        text_to_send = "Дни рождения:\n\n"
+        users = session.query(User).all()
+        for user in users:
+            text_to_send += f"Имя: {user.name}, дата рождения {user.birth}, комната {user.room_number}\n"
+        await bot.send_message(message.chat.id, text_to_send)
+    else:
+        await bot.send_message(message.chat.id, messages['not_registered'])
+
+
 @dispatcher.message_handler()
 async def add_user(message: Message):
     user_state = session.query(State).filter(State.chat_id == message.chat.id).all()
@@ -391,6 +404,8 @@ async def add_user(message: Message):
         session.add(state)
         session.commit()
     else:
+        if user_state[0].state == "birth_insert":
+            await birth_insert_handler(message, bot)
         if user_state[0].state == "get_feedback":
             await get_feed_back_handler(message, bot)
         if user_state[0].state == "meal":

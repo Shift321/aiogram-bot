@@ -16,6 +16,7 @@ class User(Base):
     days_of_meal: str = Column(String)
     recieve_payment_message: bool = Column(Boolean, default=False)
     cleaning_prefers: str = Column(String)
+    birth: date = Column(Date)
 
 
 class Menu(Base):

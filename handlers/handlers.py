@@ -7,13 +7,14 @@ from utils.utils import make_state, check_week_day
 
 async def register(message, bot):
     text = message.text.split()
-    if len(text) != 3:
+    if len(text) != 4:
         await bot.send_message(message.chat.id, "Не правильный формат ввода")
     else:
         if text[2] != "ColibringLiver":
             await bot.send_message(message.chat.id, "Не правильный пароль")
         else:
-            user = User(telegram_id=message.chat.id, name=text[0], room_number=text[1])
+            user = User(telegram_id=message.chat.id, name=text[0], room_number=text[1],
+                        birth=datetime.strptime(text[3], "%d.%m.%Y").date())
             session.add(user)
             session.commit()
             await bot.send_message(message.chat.id, f"Привет, {text[0]}, добро пожаловать!😁")
@@ -55,7 +56,7 @@ async def post_menu(message, bot):
         session.commit()
     users = session.query(User).all()
     for user in users:
-        await bot.send_message(user.telegram_id,"Меню обновлено, запишись на питание!")
+        await bot.send_message(user.telegram_id, "Меню обновлено, запишись на питание!")
     make_state(message.chat.id, "start")
     await bot.send_message(message.chat.id, "Меню добавленно🥘")
 
@@ -369,3 +370,15 @@ async def show_who_eating_for_week_handler():
     text_to_send += monday_text + monday_counter + "\n" + tueday_text + tueday_counter + "\n" + wednsedey_text + wednsedey_counter + "\n" + thurdsday_text + thurdsday_counter + "\n" + friday_text + friday_counter + "\n" + saturday_text + saturday_counter + "\n" + sunday_text + sunday_counter
 
     return text_to_send
+
+
+async def birth_insert_handler(message, bot):
+    try:
+        date_obj = datetime.strptime(message.text, "%d.%m.%Y").date()
+        user = session.query(User).filter(User.telegram_id == message.chat.id).one()
+        user.birth = date_obj
+        session.flush()
+        session.commit()
+        await bot.send_message(message.chat.id, "Готово! Спасибо)")
+    except:
+        await bot.send_message(message.chat.id, "Вы ввели что то не так попробуйте еще раз")
