@@ -25,6 +25,15 @@ async def hello(message: Message):
     await bot.send_message(message.chat.id, command_list)
 
 
+@dispatcher.message_handler(commands=['send_message_to_all'])
+async def send_to_all(message: Message):
+    all_eat = session.query(Food).all()
+    for i in all_eat:
+        user = session.query(User.id == i.user_id).one()
+        await bot.send_message(user.telegram_id,
+                               "Привет! Перезапишись пожалуйста на питанеие я произвел технические работы ,теперь все должно работать хорошо команда /meal. Если после перезаписи бот не написал готово напиши об этом пожалуйста сюда @shift123")
+
+
 @dispatcher.message_handler(commands=['meal'])
 async def when_to_eat(message: Message):
     logging_tg(message.chat.id, message)
