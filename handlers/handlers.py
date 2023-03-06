@@ -221,9 +221,15 @@ async def when_to_eat_handler(message, bot):
             print("wrong len")
             await bot.send_message(message.chat.id, "Вы ввели что то не так попробуйте еще раз")
             return
-
+    user = session.query(User).filter(User.telegram_id == message.chat.id).one()
+    all_eat = session.query(Food).filter(Food.user_id == user.id).all()
+    if len(all_eat) != 0:
+        for i in all_eat:
+            session.delete(i)
+            session.commit()
     for day in when_to_eat:
         day = day.split()
+
         if len(day) == 3:
             check_eat = session.query(Food).filter(Food.user_id == user.id,
                                                    Food.name_of_week_day == day[0].lower()).all()
