@@ -174,7 +174,6 @@ async def add_cleaning_handler(message, bot):
     cleaning_days = message.text.split(";")
     for one_cleaning in cleaning_days:
         text = one_cleaning.split()
-        print(text)
         week_day = text[0]
         room_number = text[1]
         cleaning = session.query(Cleaning).filter(Cleaning.week_day == week_day.lower()).all()
