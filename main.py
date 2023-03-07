@@ -89,7 +89,7 @@ async def add_cleaning(message: Message):
 @dispatcher.message_handler(commands=['show_cleaning'])
 async def show_cleanings(message: Message):
     logging_tg(message.chat.id, message)
-    now_day = datetime.date.today() + datetime.timedelta(days=1)
+    now_day = datetime.date.today()
     weekday = now_day.strftime("%A")
     if is_register(message):
         cleanings = session.query(Cleaning).filter(Cleaning.week_day == check_week_day(weekday)).all()
