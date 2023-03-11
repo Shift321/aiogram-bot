@@ -2,7 +2,6 @@ from datetime import date
 import datetime
 from aiogram import Bot, executor, Dispatcher
 from aiogram.types import Message
-from sqlalchemy import func
 
 from database.db import Base, engine, session
 from handlers.handlers import register, admin, food, post_menu, time_to_pay_handler, wash_clothes_handler, \
@@ -10,7 +9,7 @@ from handlers.handlers import register, admin, food, post_menu, time_to_pay_hand
     change_text_cleaning_handler, get_feed_back_handler, show_who_eating_for_week_handler, birth_insert_handler
 
 from models.models import User, Menu, Washes, Food, State, Cleaning, FeedBack
-from utils.messages import messages, command_list, admin_command_list, meal_text
+from utils.messages import messages, command_list, admin_command_list, meal_text, days_of_meal
 from utils.utils import logging_tg, is_register, check_week_day, make_state
 
 bot = Bot("5888170225:AAEN6YCV3hBD6G54Kb9tHuDeRajpY_Uicug")
@@ -41,6 +40,7 @@ async def when_to_eat(message: Message):
     logging_tg(message.chat.id, message)
     make_state(message.chat.id, "meal")
     await bot.send_message(message.chat.id, meal_text)
+    await bot.send_message(message.chat.id,days_of_meal)
 
 
 @dispatcher.message_handler(commands=['pay'])
