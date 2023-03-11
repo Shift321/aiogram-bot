@@ -28,7 +28,7 @@ async def hello(message: Message):
 @dispatcher.message_handler(commands=['send_message_to_all'])
 async def send_to_all(message: Message):
     make_state(message.chat.id, "send_to_all")
-    await bot.send_message(message.chat.id, "Готово")
+    await bot.send_message(message.chat.id, "Введите текст чтобы отправить его всем")
 
 
 @dispatcher.message_handler(commands=['meal'])
