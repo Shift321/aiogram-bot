@@ -372,12 +372,7 @@ async def show_who_eating_for_week_handler():
 
 
 async def birth_insert_handler(message, bot):
-    try:
-        date_obj = datetime.strptime(message.text, "%d.%m.%Y").date()
-        user = session.query(User).filter(User.telegram_id == message.chat.id).one()
-        user.birth = date_obj
-        session.flush()
-        session.commit()
-        await bot.send_message(message.chat.id, "Готово! Спасибо)")
-    except:
-        await bot.send_message(message.chat.id, "Вы ввели что то не так попробуйте еще раз")
+    users = session.query(User).all()
+    for user in users:
+        await bot.send_message(user.telegram_id, message.text)
+    await bot.send_message(message.chat.id, "Готово")

@@ -27,11 +27,7 @@ async def hello(message: Message):
 
 @dispatcher.message_handler(commands=['send_message_to_all'])
 async def send_to_all(message: Message):
-    users = session.query(User).all()
-    for user in users:
-        await bot.send_message(user.telegram_id,
-                               "Привет! Введи пожалуйста свою дату рождения! Это нужно чтобы мы знали , когда у вас день рождения.")
-        make_state(user.telegram_id, "birth_insert")
+    make_state(message.chat.id, "send_to_all")
     await bot.send_message(message.chat.id, "Готово")
 
 
@@ -406,7 +402,7 @@ async def add_user(message: Message):
         session.add(state)
         session.commit()
     else:
-        if user_state[0].state == "birth_insert":
+        if user_state[0].state == "send_to_all":
             await birth_insert_handler(message, bot)
         if user_state[0].state == "get_feedback":
             await get_feed_back_handler(message, bot)
