@@ -1,16 +1,18 @@
+import json
 from datetime import date
 import datetime
 from aiogram import Bot, executor, Dispatcher
-from aiogram.types import Message
+from aiogram.types import Message, PollAnswer
 
 from database.db import Base, engine, session
 from handlers.handlers import register, admin, food, post_menu, time_to_pay_handler, wash_clothes_handler, \
-    want_to_add_wish, list_of_wish, delete_user_handler, add_cleaning_handler, when_to_eat_handler, \
+    want_to_add_wish, list_of_wish, delete_user_handler, add_cleaning_handler, \
     change_text_cleaning_handler, get_feed_back_handler, show_who_eating_for_week_handler, birth_insert_handler
 
-from models.models import User, Menu, Washes, Food, State, Cleaning, FeedBack
-from utils.messages import messages, command_list, admin_command_list, meal_text, days_of_meal
-from utils.utils import logging_tg, is_register, check_week_day, make_state
+from models.models import User, Menu, Washes, Food, State, Cleaning, FeedBack, Dinner
+from utils.messages import messages, command_list, admin_command_list, week_days
+from utils.utils import logging_tg, is_register, check_week_day, make_state, first_course_help, breakfast_help, \
+    second_course_help, no_breakfast, no_first_course, no_second_course
 
 bot = Bot("5888170225:AAEN6YCV3hBD6G54Kb9tHuDeRajpY_Uicug")
 dispatcher = Dispatcher(bot)
@@ -27,16 +29,40 @@ async def hello(message: Message):
 
 @dispatcher.message_handler(commands=['send_message_to_all'])
 async def send_to_all(message: Message):
-    make_state(message.chat.id, "send_to_all")
-    await bot.send_message(message.chat.id, "Введите текст чтобы отправить его всем")
+    if is_register(message):
+        user = session.query(User).filter(User.telegram_id == message.chat.id).one()
+        if user.is_admin:
+            make_state(message.chat.id, "send_to_all")
+            await bot.send_message(message.chat.id, "Введите текст чтобы отправить его всем")
+        else:
+            await bot.send_message(message.chat.id, "Тебе сюда нельзя уходи! ")
+    else:
+        await bot.send_message(message.chat.id, messages['not_registered'])
 
 
 @dispatcher.message_handler(commands=['meal'])
 async def when_to_eat(message: Message):
     logging_tg(message.chat.id, message)
-    make_state(message.chat.id, "meal")
-    await bot.send_message(message.chat.id, meal_text)
-    await bot.send_message(message.chat.id,days_of_meal)
+    if is_register(message):
+        poll = await message.answer_poll(question='Завтраки',
+                                         allows_multiple_answers=True,
+                                         options=week_days,
+                                         is_anonymous=False)
+        poll2 = await message.answer_poll(question='Обеды(первое)',
+                                          allows_multiple_answers=True,
+                                          options=week_days,
+                                          is_anonymous=False)
+        poll3 = await message.answer_poll(question='Обеды(второе)',
+                                          allows_multiple_answers=True,
+                                          options=week_days,
+                                          is_anonymous=False)
+        info_string = '{' + f'"tg_user_id": {message.from_user.id}, "breakfast": {poll.poll.id}, "first_course": {poll2.poll.id},"second_course": {poll3.poll.id}' + '}'
+        user = session.query(User).filter(User.telegram_id == message.chat.id).one()
+        user.info_string = info_string
+        session.flush()
+        session.commit()
+    else:
+        await bot.send_message(message.chat.id, messages['not_registered'])
 
 
 @dispatcher.message_handler(commands=['pay'])
@@ -183,7 +209,8 @@ async def register_user(message: Message):
     if not is_register(message):
 
         make_state(message.chat.id, "register")
-        await bot.send_message(message.chat.id, "Введи cвоё имя, номер комнаты, пароль и Дату рождения в формате (07.03.1999) через пробел!😼")
+        await bot.send_message(message.chat.id,
+                               "Введи cвоё имя, номер комнаты, пароль и Дату рождения в формате (07.03.1999) через пробел!😼")
     else:
         await bot.send_message(message.chat.id, "Вы уже зарегистрированы!😼")
 
@@ -262,6 +289,19 @@ async def show_wish(message: Message):
             await bot.send_message(message.chat.id, "Тебе сюда нелья!")
     else:
         await bot.send_message(message.chat.id, messages['not_registered'])
+
+
+@dispatcher.message_handler(commands=['delete_all_food_and_send_message'])
+async def do_shit(message: Message):
+    all_food = session.query(Food).all()
+    for i in all_food:
+        session.delete(i)
+        session.commit()
+    users = session.query(User).all()
+    for user in users:
+        await bot.send_message(user.telegram_id,
+                               "Привет! Я изменил запись на еду, теперь она стала удобнее и понятнее и наконец можно взять отдельно второе и отдельно первое)\n\nТак же пожалуйста если ты был записан на еду перезапишись еще раз команда /meal .Думаю никакие инструкции там не нужны все интуитивно понятно единственный нюанс если ты не будешь что то из 3 вариантов нажимай кнопку ничего не буду и не забывай нажимать кнопку проголосовать")
+    await bot.send_message(message.chat.id, "готово")
 
 
 @dispatcher.message_handler(commands=['what_close'])
@@ -356,8 +396,19 @@ async def show_who_eating(message: Message):
                 else:
                     message_to_send_breakfast += f"{user.name} {user.room_number} не ест {user.food}\n"
 
+            counter_first_course = 0
+            counter_second_course = 0
             eat_dinner = session.query(Food).filter(Food.name_of_week_day == rus_week_day, Food.dinner == True).all()
-            message_to_send_dinner = f"\n\nКто ест сегодня обед : \n\n{len(eat_dinner)} порций\n\n"
+            for one_dinner in eat_dinner:
+                course = session.query(Dinner).filter(Dinner.food_id == one_dinner.id).all()
+                if len(course) == 0:
+                    pass
+                else:
+                    if course[0].first_course:
+                        counter_first_course += 1
+                    if course[0].second_course:
+                        counter_second_course += 1
+            message_to_send_dinner = f"\n\nКто ест сегодня обед : \n\nПервое:{counter_first_course} порций\nВторое:{counter_second_course} порций\n"
             for i in eat_dinner:
                 user = session.query(User).filter(User.id == i.user_id).one()
                 if not user.food:
@@ -394,6 +445,50 @@ async def show_birth(message: Message):
         await bot.send_message(message.chat.id, messages['not_registered'])
 
 
+@dispatcher.poll_answer_handler()
+async def poll_answer(poll_answer: PollAnswer):
+    users = session.query(User).all()
+    for user in users:
+        if user.info_string is not None:
+            info_string = json.loads(user.info_string)
+            if info_string['tg_user_id'] == poll_answer.user.id:
+                information = json.loads(user.info_string)
+                user_id = user.id
+    user = session.query(User).filter(User.id == user_id).one()
+
+    if information['breakfast'] == int(poll_answer.poll_id):
+        if poll_answer.option_ids == [7]:
+            no_breakfast(user)
+        else:
+            breakfast_help(poll_answer, user)
+
+    if information['first_course'] == int(poll_answer.poll_id):
+        if poll_answer.option_ids == [7]:
+            no_first_course(user)
+        else:
+            first_course_help(poll_answer, user)
+
+    if information['second_course'] == int(poll_answer.poll_id):
+        if poll_answer.option_ids == [7]:
+            no_second_course(user)
+        else:
+            second_course_help(poll_answer, user)
+    foods = session.query(Food).filter(Food.user_id == user.id).all()
+    for i in foods:
+        courses = session.query(Dinner).filter(Dinner.food_id == i.id).all()
+        if len(courses) == 0:
+            pass
+        else:
+            if courses[0].first_course == False and courses[0].second_course == False:
+                i.dinner = False
+                session.flush()
+                session.commit()
+            else:
+                i.dinner = True
+                session.flush()
+                session.commit()
+
+
 @dispatcher.message_handler()
 async def add_user(message: Message):
     user_state = session.query(State).filter(State.chat_id == message.chat.id).all()
@@ -406,8 +501,6 @@ async def add_user(message: Message):
             await birth_insert_handler(message, bot)
         if user_state[0].state == "get_feedback":
             await get_feed_back_handler(message, bot)
-        if user_state[0].state == "meal":
-            await when_to_eat_handler(message, bot)
         if user_state[0].state == "add_cleaning":
             await add_cleaning_handler(message, bot)
         if user_state[0].state == "added_cleaning":

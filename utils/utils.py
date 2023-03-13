@@ -1,7 +1,8 @@
 import datetime
 
 from database.db import session
-from models.models import User, State
+from models.models import User, State, Food, Dinner
+from utils.messages import choices
 
 
 def logging_tg(tg_id, message):
@@ -52,3 +53,147 @@ def make_state(chat_id, state_name):
         state = State(chat_id=chat_id, state=state_name)
         session.add(state)
         session.commit()
+
+
+def first_course_help(poll_answer, user):
+    all_user_food = session.query(Food).filter(Food.user_id == user.id, Food.dinner == True).all()
+    for one_food in all_user_food:
+        courses = session.query(Dinner).filter(Dinner.food_id == one_food.id, Dinner.first_course == True).all()
+        for course in courses:
+            course.first_course = False
+            session.flush()
+            session.commit()
+        one_food.dinner = False
+        session.flush()
+        session.commit()
+
+    for i in poll_answer.option_ids:
+        foods_check_first = session.query(Food).filter(Food.name_of_week_day == choices[str(i)],
+                                                       Food.user_id == user.id).all()
+        if len(foods_check_first) == 0:
+            foods_check_first = Food(name_of_week_day=choices[str(i)], user_id=user.id, dinner=True)
+            session.add(foods_check_first)
+            session.commit()
+        else:
+            foods_check_first[0].dinner = True
+            session.flush()
+            session.commit()
+        food = session.query(Food).filter(Food.name_of_week_day == choices[str(i)],
+                                          Food.user_id == user.id).one()
+        check_dinners = session.query(Dinner).filter(Dinner.food_id == food.id).all()
+        for dinner in check_dinners:
+            dinner.first_course = False
+            session.flush()
+            session.commit()
+        if len(check_dinners) == 0:
+            dinner = Dinner(food_id=food.id, first_course=True)
+            session.add(dinner)
+            session.commit()
+        else:
+            check_dinners[0].first_course = True
+            session.flush()
+            session.commit()
+
+
+def second_course_help(poll_answer, user):
+    all_user_food = session.query(Food).filter(Food.user_id == user.id, Food.dinner == True).all()
+    for one_food in all_user_food:
+        courses = session.query(Dinner).filter(Dinner.food_id == one_food.id, Dinner.second_course == True).all()
+        for course in courses:
+            course.second_course = False
+            session.flush()
+            session.commit()
+        one_food.dinner = False
+        session.flush()
+        session.commit()
+
+    for i in poll_answer.option_ids:
+        foods_check_first = session.query(Food).filter(Food.name_of_week_day == choices[str(i)],
+                                                       Food.user_id == user.id).all()
+        if len(foods_check_first) == 0:
+            foods_check_first = Food(name_of_week_day=choices[str(i)], user_id=user.id, dinner=True)
+            session.add(foods_check_first)
+            session.commit()
+        else:
+            foods_check_first[0].dinner = True
+            session.flush()
+            session.commit()
+        food = session.query(Food).filter(Food.name_of_week_day == choices[str(i)],
+                                          Food.user_id == user.id).one()
+        check_dinners = session.query(Dinner).filter(Dinner.food_id == food.id).all()
+        for dinner in check_dinners:
+            dinner.second_course = False
+            session.flush()
+            session.commit()
+        if len(check_dinners) == 0:
+            dinner = Dinner(food_id=food.id, second_course=True)
+            session.add(dinner)
+            session.commit()
+        else:
+            check_dinners[0].second_course = True
+            session.flush()
+            session.commit()
+
+
+def breakfast_help(poll_answer, user):
+    all_user_food = session.query(Food).filter(Food.user_id == user.id, Food.breakfast == True).all()
+    for one_food in all_user_food:
+        one_food.breakfast = False
+        session.flush()
+        session.commit()
+
+    for i in poll_answer.option_ids:
+        foods_check = session.query(Food).filter(Food.name_of_week_day == choices[str(i)],
+                                                 Food.user_id == user.id).all()
+        if len(foods_check) == 0:
+            food_add = Food(name_of_week_day=choices[str(i)], user_id=user.id, breakfast=True)
+            session.add(food_add)
+            session.commit()
+        else:
+            foods_check[0].breakfast = True
+            session.flush()
+            session.commit()
+
+
+def no_breakfast(user):
+    all_food = session.query(Food).filter(Food.user_id == user.id).all()
+    for food in all_food:
+        food.breakfast = False
+        session.flush()
+        session.commit()
+
+
+def no_first_course(user):
+    all_food = session.query(Food).filter(Food.user_id == user.id, Food.dinner == True).all()
+    for food in all_food:
+        course = session.query(Dinner).filter(Dinner.food_id == food.id).one()
+        course.first_course = False
+        session.flush()
+        session.commit()
+
+
+def no_second_course(user):
+    all_food = session.query(Food).filter(Food.user_id == user.id, Food.dinner == True).all()
+    for food in all_food:
+        course = session.query(Dinner).filter(Dinner.food_id == food.id).one()
+        course.second_course = False
+        session.flush()
+        session.commit()
+
+
+def what_to_eat_dinner(user, food):
+    text = ''
+    if food.breakfast:
+        text = 'завтрак, '
+    if food.dinner:
+        course = session.query(Dinner).filter(Dinner.food_id == food.id).all()
+        if len(course) == 0:
+            pass
+        else:
+            if course[0].first_course:
+                text += "суп и "
+            if course[0].second_course:
+                text += "второе"
+        return text
+    else:
+        return text

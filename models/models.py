@@ -17,6 +17,7 @@ class User(Base):
     recieve_payment_message: bool = Column(Boolean, default=False)
     cleaning_prefers: str = Column(String)
     birth: date = Column(Date)
+    info_string: str = Column(String)
 
 
 class Menu(Base):
@@ -88,3 +89,12 @@ class FeedBack(Base):
     id: int = Column(Integer, primary_key=True, index=True)
     chat_id: int = Column(Integer)
     text: str = Column(String)
+
+
+class Dinner(Base):
+    __tablename__ = 'dinner'
+
+    id: int = Column(Integer, primary_key=True, index=True)
+    food_id: int = Column(Integer, ForeignKey('food.id'))
+    first_course: bool = Column(Boolean, default=False)
+    second_course: bool = Column(Boolean, default=False)

@@ -5,7 +5,7 @@ import time
 import requests
 
 from database.db import session
-from models.models import Payments, User, Cleaning, Food
+from models.models import Payments, User, Cleaning, Food, Dinner
 from utils.messages import cleaning_time, feed_back
 from utils.utils import make_state, check_week_day
 
@@ -71,7 +71,15 @@ def send_paymet_food():
                 if i.breakfast:
                     summ_to_pay += 10
                 if i.dinner:
-                    summ_to_pay += 20
+                    course = session.query(Dinner).filter(Dinner.food_id == i.id).all()
+                    if len(course) == 0:
+                        pass
+                    else:
+                        if course[0].first_course:
+                            summ_to_pay += 10
+                        if course[0].second_course:
+                            summ_to_pay += 10
+
         print("here")
         if summ_to_pay == 0:
             return
@@ -98,6 +106,12 @@ def make_sended_false():
         i.sended = False
         session.flush()
         session.commit()
+
+
+def delete_food():
+    all_food = session.query(Food).all()
+    session.delete(all_food)
+    session.commit()
 
 
 def check_time(hour, minute):
@@ -129,6 +143,8 @@ while True:
             user.recieve_payment_message = False
         tumbler = False
     if weekday == "Sunday":
+        if check_time(11, 00):
+            delete_food()
         if check_time(9, 00):
             send_paymet_food()
     if check_time(11, 00):
