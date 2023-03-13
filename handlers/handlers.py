@@ -317,7 +317,7 @@ async def show_who_eating_for_week_handler():
                         if course[0].second_course:
                             sunday_second_course_counter += 1
                     user = session.query(User).filter(User.id == i.user_id).one()
-                    sunday_text += f"Имя: {user.name},{breakfast if i.breakfast == True else empty} {dinner if i.dinner == True else empty}\n"
+                    sunday_text += f"Имя: {user.name} - {what_to_eat_dinner(user, food=i)}\n"
     monday_counter = f"\n\nКоличество завтраков: {monday_breakfast_counter}\nКоличество обедов - первое: {monday_first_course_counter}, второе:{monday_second_course_counter}\n\n"
     tueday_counter = f"\n\nКоличество завтраков: {tuesday_breakfast_counter}\nКоличество обедов - первое: {tuesday_first_course_counter}, второе:{tuesday_second_course_counter}\n\n"
     wednsedey_counter = f"\n\nКоличество завтраков: {wednsedey_breakfast_counter}\nКоличество обедов - первое: {wednsedey_first_course_counter}, второе:{wednsedey_second_course_counter}\n\n"
