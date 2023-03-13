@@ -48,8 +48,19 @@ def check_cleaning():
         return
     else:
         for cleaning in cleanings:
-            for room_number in cleaning.room_number.split(","):
-                print(room_number)
+            if "," in cleaning.room_number:
+                for room_number in cleaning.room_number.split(","):
+                    users = session.query(User).filter(User.room_number == room_number).all()
+                    for user in users:
+                        make_state(user.telegram_id, "added_cleaning")
+                        send_message(user_id=user.telegram_id, text_to_send=cleaning_time)
+                        if make_text_for_cleaning() is not None:
+                            send_message(user_id=user.telegram_id, text_to_send=make_text_for_cleaning())
+                        cleaning.sended = True
+                        session.flush()
+                        session.commit()
+            else:
+                room_number = cleaning.room_number
                 users = session.query(User).filter(User.room_number == room_number).all()
                 for user in users:
                     make_state(user.telegram_id, "added_cleaning")
