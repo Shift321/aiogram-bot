@@ -191,7 +191,10 @@ def what_to_eat_dinner(user, food):
             pass
         else:
             if course[0].first_course:
-                text += "суп и "
+                if course[0].second_course:
+                    text += "суп и "
+                else:
+                    text += "суп"
             if course[0].second_course:
                 text += "второе"
         return text
