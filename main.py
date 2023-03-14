@@ -120,7 +120,19 @@ async def show_cleanings(message: Message):
             text_to_send = "На сегодня нет уборок"
         else:
             for cleaning in cleanings:
-                for room_number in cleaning.room_number.split(","):
+                if "," in cleaning.room_number:
+                    for room_number in cleaning.room_number.split(","):
+                        users = session.query(User).filter(User.room_number == room_number).all()
+                        if len(users) == 0:
+                            text_to_send += f"Комната: {room_number} в ней никто не живет"
+                        for i in users:
+                            if i.cleaning_prefers is not None:
+                                text_to_send += f"Комната: {room_number} предпочтения:{i.cleaning_prefers}\n"
+                                break
+                            else:
+                                text_to_send += f"Комната: {room_number} предпочтений нет\n"
+                else:
+                    room_number = cleaning.room_number
                     users = session.query(User).filter(User.room_number == room_number).all()
                     if len(users) == 0:
                         text_to_send += f"Комната: {room_number} в ней никто не живет"
