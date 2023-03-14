@@ -120,7 +120,7 @@ async def show_cleanings(message: Message):
             text_to_send = "На сегодня нет уборок"
         else:
             for cleaning in cleanings:
-                if "," in cleaning.room_number:
+                if "," in str(cleaning.room_number):
                     for room_number in cleaning.room_number.split(","):
                         users = session.query(User).filter(User.room_number == room_number).all()
                         if len(users) == 0:

@@ -48,7 +48,7 @@ def check_cleaning():
         return
     else:
         for cleaning in cleanings:
-            if "," in cleaning.room_number:
+            if "," in str(cleaning.room_number):
                 for room_number in cleaning.room_number.split(","):
                     users = session.query(User).filter(User.room_number == room_number).all()
                     for user in users:
