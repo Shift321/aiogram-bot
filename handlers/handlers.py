@@ -234,9 +234,6 @@ async def show_who_eating_for_week_handler():
     sunday_first_course_counter = 0
     sunday_second_course_counter = 0
     sunday_text = f"Воскресенье:\n\n"
-    empty = ""
-    breakfast = "завтрак"
-    dinner = "обед"
     all_food = session.query(Food).all()
     for i in all_food:
         user = session.query(User).filter(User.id == i.user_id).all()
@@ -246,78 +243,79 @@ async def show_who_eating_for_week_handler():
         else:
             course = session.query(Dinner).filter(Dinner.food_id == i.id).all()
             if len(course) == 0:
-                pass
-            else:
-                if i.name_of_week_day == "понедельник":
-                    if i.breakfast:
-                        monday_breakfast_counter += 1
-                    if i.dinner:
-                        if course[0].first_course:
-                            monday_first_course_counter += 1
-                        if course[0].second_course:
-                            monday_second_course_counter += 1
-                    user = session.query(User).filter(User.id == i.user_id).one()
-                    monday_text += f"Имя: {user.name} - {what_to_eat_dinner(user, food=i)}\n"
-                if i.name_of_week_day == "вторник":
-                    if i.breakfast:
-                        tuesday_breakfast_counter += 1
-                    if i.dinner:
-                        if course[0].first_course:
-                            tuesday_first_course_counter += 1
-                        if course[0].second_course:
-                            tuesday_second_course_counter += 1
-                    user = session.query(User).filter(User.id == i.user_id).one()
-                    tueday_text += f"Имя: {user.name} - {what_to_eat_dinner(user, food=i)}\n"
-                if i.name_of_week_day == "среда":
-                    if i.breakfast:
-                        wednsedey_breakfast_counter += 1
-                    if i.dinner:
-                        if course[0].first_course:
-                            wednsedey_first_course_counter += 1
-                        if course[0].second_course:
-                            wednsedey_second_course_counter += 1
-                    user = session.query(User).filter(User.id == i.user_id).one()
-                    wednsedey_text += f"Имя: {user.name} - {what_to_eat_dinner(user, food=i)}\n"
-                if i.name_of_week_day == "четверг":
-                    if i.breakfast:
-                        thurdsday_breakfast_counter += 1
-                    if i.dinner:
-                        if course[0].first_course:
-                            thurdsday_first_course_counter += 1
-                        if course[0].second_course:
-                            thurdsday_second_course_counter += 1
-                    user = session.query(User).filter(User.id == i.user_id).one()
-                    thurdsday_text += f"Имя: {user.name} - {what_to_eat_dinner(user, food=i)}\n"
-                if i.name_of_week_day == "пятница":
-                    if i.breakfast:
-                        friday_breakfast_counter += 1
-                    if i.dinner:
-                        if course[0].first_course:
-                            friday_first_course_counter += 1
-                        if course[0].second_course:
-                            friday_second_course_counter += 1
-                    user = session.query(User).filter(User.id == i.user_id).one()
-                    friday_text += f"Имя: {user.name} - {what_to_eat_dinner(user, food=i)}\n"
-                if i.name_of_week_day == "суббота":
-                    if i.breakfast:
-                        saturday_breakfast_counter += 1
-                    if i.dinner:
-                        if course[0].first_course:
-                            saturday_first_course_counter += 1
-                        if course[0].second_course:
-                            saturday_second_course_counter += 1
-                    user = session.query(User).filter(User.id == i.user_id).one()
-                    saturday_text += f"Имя: {user.name} - {what_to_eat_dinner(user, food=i)}\n"
-                if i.name_of_week_day == "воскресенье":
-                    if i.breakfast:
-                        sunday_breakfast_counter += 1
-                    if i.dinner:
-                        if course[0].first_course:
-                            sunday_first_course_counter += 1
-                        if course[0].second_course:
-                            sunday_second_course_counter += 1
-                    user = session.query(User).filter(User.id == i.user_id).one()
-                    sunday_text += f"Имя: {user.name} - {what_to_eat_dinner(user, food=i)}\n"
+                course = Dinner(food_id = i.id)
+                session.add(course)
+                session.commit()
+            if i.name_of_week_day == "понедельник":
+                if i.breakfast:
+                    monday_breakfast_counter += 1
+                if i.dinner:
+                    if course[0].first_course:
+                        monday_first_course_counter += 1
+                    if course[0].second_course:
+                        monday_second_course_counter += 1
+                user = session.query(User).filter(User.id == i.user_id).one()
+                monday_text += f"Имя: {user.name} - {what_to_eat_dinner(user, food=i)}\n"
+            if i.name_of_week_day == "вторник":
+                if i.breakfast:
+                    tuesday_breakfast_counter += 1
+                if i.dinner:
+                    if course[0].first_course:
+                        tuesday_first_course_counter += 1
+                    if course[0].second_course:
+                        tuesday_second_course_counter += 1
+                user = session.query(User).filter(User.id == i.user_id).one()
+                tueday_text += f"Имя: {user.name} - {what_to_eat_dinner(user, food=i)}\n"
+            if i.name_of_week_day == "среда":
+                if i.breakfast:
+                    wednsedey_breakfast_counter += 1
+                if i.dinner:
+                    if course[0].first_course:
+                        wednsedey_first_course_counter += 1
+                    if course[0].second_course:
+                        wednsedey_second_course_counter += 1
+                user = session.query(User).filter(User.id == i.user_id).one()
+                wednsedey_text += f"Имя: {user.name} - {what_to_eat_dinner(user, food=i)}\n"
+            if i.name_of_week_day == "четверг":
+                if i.breakfast:
+                    thurdsday_breakfast_counter += 1
+                if i.dinner:
+                    if course[0].first_course:
+                        thurdsday_first_course_counter += 1
+                    if course[0].second_course:
+                        thurdsday_second_course_counter += 1
+                user = session.query(User).filter(User.id == i.user_id).one()
+                thurdsday_text += f"Имя: {user.name} - {what_to_eat_dinner(user, food=i)}\n"
+            if i.name_of_week_day == "пятница":
+                if i.breakfast:
+                    friday_breakfast_counter += 1
+                if i.dinner:
+                    if course[0].first_course:
+                        friday_first_course_counter += 1
+                    if course[0].second_course:
+                        friday_second_course_counter += 1
+                user = session.query(User).filter(User.id == i.user_id).one()
+                friday_text += f"Имя: {user.name} - {what_to_eat_dinner(user, food=i)}\n"
+            if i.name_of_week_day == "суббота":
+                if i.breakfast:
+                    saturday_breakfast_counter += 1
+                if i.dinner:
+                    if course[0].first_course:
+                        saturday_first_course_counter += 1
+                    if course[0].second_course:
+                        saturday_second_course_counter += 1
+                user = session.query(User).filter(User.id == i.user_id).one()
+                saturday_text += f"Имя: {user.name} - {what_to_eat_dinner(user, food=i)}\n"
+            if i.name_of_week_day == "воскресенье":
+                if i.breakfast:
+                    sunday_breakfast_counter += 1
+                if i.dinner:
+                    if course[0].first_course:
+                        sunday_first_course_counter += 1
+                    if course[0].second_course:
+                        sunday_second_course_counter += 1
+                user = session.query(User).filter(User.id == i.user_id).one()
+                sunday_text += f"Имя: {user.name} - {what_to_eat_dinner(user, food=i)}\n"
     monday_counter = f"\n\nКоличество завтраков: {monday_breakfast_counter}\nКоличество обедов - первое: {monday_first_course_counter}, второе:{monday_second_course_counter}\n\n"
     tueday_counter = f"\n\nКоличество завтраков: {tuesday_breakfast_counter}\nКоличество обедов - первое: {tuesday_first_course_counter}, второе:{tuesday_second_course_counter}\n\n"
     wednsedey_counter = f"\n\nКоличество завтраков: {wednsedey_breakfast_counter}\nКоличество обедов - первое: {wednsedey_first_course_counter}, второе:{wednsedey_second_course_counter}\n\n"
