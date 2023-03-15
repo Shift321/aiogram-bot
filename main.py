@@ -14,7 +14,7 @@ from utils.messages import messages, command_list, admin_command_list, week_days
 from utils.utils import logging_tg, is_register, check_week_day, make_state, first_course_help, breakfast_help, \
     second_course_help, no_breakfast, no_first_course, no_second_course
 
-bot = Bot("5888170225:AAEN6YCV3hBD6G54Kb9tHuDeRajpY_Uicug")
+bot = Bot("5888170225:AAF49kmNi9IngDKghmYWUknvDhYZMYM3-Uc")
 dispatcher = Dispatcher(bot)
 Base.metadata.create_all(engine)
 
