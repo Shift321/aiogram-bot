@@ -400,7 +400,7 @@ async def show_who_eating(message: Message):
             weekday = today.strftime("%A")
             rus_week_day = check_week_day(weekday)
             eat = session.query(Food).filter(Food.name_of_week_day == rus_week_day, Food.breakfast == True).all()
-            message_to_send_breakfast = f"Кто ест сегодня завтрак :\n\n{len(eat)} порций\n\n"
+            message_to_send_breakfast = f"Кто ест сегодня завтрак: \n\n{len(eat)} порций\n\n"
             for i in eat:
                 user = session.query(User).filter(User.id == i.user_id).one()
                 if not user.food:
@@ -420,7 +420,7 @@ async def show_who_eating(message: Message):
                         counter_first_course += 1
                     if course[0].second_course:
                         counter_second_course += 1
-            message_to_send_dinner = f"\n\nКто ест сегодня обед : \n\nПервое:{counter_first_course} порций\nВторое:{counter_second_course} порций\n"
+            message_to_send_dinner = f"\n\nКто ест сегодня обед : \n\nПервое: {counter_first_course} порций\nВторое: {counter_second_course} порций\n\n"
             for i in eat_dinner:
                 user = session.query(User).filter(User.id == i.user_id).one()
                 if not user.food:
