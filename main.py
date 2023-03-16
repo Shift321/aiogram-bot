@@ -428,12 +428,12 @@ async def show_who_eating(message: Message):
                     if course[0].first_course:
                         message_to_send_dinner += f"\n{user.name} {user.room_number} суп"
                         if course[0].second_course:
-                            message_to_send_dinner += " и второе\n"
+                            message_to_send_dinner += " и второе"
                 else:
                     if course[0].first_course:
                         message_to_send_dinner += f"\n{user.name} {user.room_number} не ест {user.food} - суп"
                         if course[0].second_course:
-                            message_to_send_dinner += " и второе\n"
+                            message_to_send_dinner += " и второе"
             message_to_send = message_to_send_breakfast + message_to_send_dinner
             await bot.send_message(message.chat.id, message_to_send)
     else:
