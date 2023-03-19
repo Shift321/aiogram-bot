@@ -307,6 +307,10 @@ async def show_wish(message: Message):
 async def do_shit(message: Message):
     all_food = session.query(Food).all()
     for i in all_food:
+        course = session.query(Dinner).filter(Dinner.food_id == i.id).all()
+        for j in course:
+            session.delete(j)
+            session.commit()
         session.delete(i)
         session.commit()
     users = session.query(User).all()

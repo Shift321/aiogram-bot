@@ -121,8 +121,13 @@ def make_sended_false():
 
 def delete_food():
     all_food = session.query(Food).all()
-    session.delete(all_food)
-    session.commit()
+    for i in all_food:
+        course = session.query(Dinner).filter(Dinner.food_id == i.id).all()
+        for j in course:
+            session.delete(j)
+            session.commit()
+        session.delete(i)
+        session.commit()
 
 
 def check_time(hour, minute):
