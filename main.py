@@ -29,32 +29,40 @@ async def hello(message: Message):
 
 @dispatcher.message_handler(commands=['who_need_to_pay'])
 async def who_need_to_pay(message: Message):
-    text_to_send = 'Оплата за еду за эту неделю\n\n'
-    food = session.query(Food).all()
-    payments = {}
-    for i in food:
-        user = session.query(User).filter(User.id == i.user_id).one()
-        if i.breakfast:
-            if user.id in payments.keys():
-                payments[user.id] += 10
-            else:
-                payments[user.id] = 10
-        if i.dinner:
-            course = session.query(Dinner).filter(Dinner.food_id == i.id).one()
-            if course.first_course:
-                if user.id in payments.keys():
-                    payments[user.id] += 10
-                else:
-                    payments[user.id] = 10
-            if course.second_course:
-                if user.id in payments.keys():
-                    payments[user.id] += 10
-                else:
-                    payments[user.id] = 10
-    for user_id in payments.keys():
-        user = session.query(User).filter(User.id == user_id).one()
-        text_to_send += f"{user.name} - {payments[user_id]} лари\n"
-    await bot.send_message(message.chat.id, text_to_send)
+    if is_register(message):
+        chat_id = message.chat.id
+        user_admin = session.query(User).filter(User.telegram_id == chat_id).one()
+        if user_admin.is_admin:
+            text_to_send = 'Оплата за еду за эту неделю\n\n'
+            food = session.query(Food).all()
+            payments = {}
+            for i in food:
+                user = session.query(User).filter(User.id == i.user_id).one()
+                if i.breakfast:
+                    if user.id in payments.keys():
+                        payments[user.id] += 10
+                    else:
+                        payments[user.id] = 10
+                if i.dinner:
+                    course = session.query(Dinner).filter(Dinner.food_id == i.id).one()
+                    if course.first_course:
+                        if user.id in payments.keys():
+                            payments[user.id] += 10
+                        else:
+                            payments[user.id] = 10
+                    if course.second_course:
+                        if user.id in payments.keys():
+                            payments[user.id] += 10
+                        else:
+                            payments[user.id] = 10
+            for user_id in payments.keys():
+                user = session.query(User).filter(User.id == user_id).one()
+                text_to_send += f"{user.name} - {payments[user_id]} лари\n"
+            await bot.send_message(message.chat.id, text_to_send)
+        else:
+            await bot.send_message(message.chat.id,"Тебе сюда нельзя")
+    else:
+        await bot.send_message(message.chat.id,messages['not_registered'])
 
 
 @dispatcher.message_handler(commands=['send_message_to_all'])
