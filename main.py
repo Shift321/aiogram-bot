@@ -29,7 +29,7 @@ async def hello(message: Message):
 
 @dispatcher.message_handler(commands=['who_need_to_pay'])
 async def who_need_to_pay(message: Message):
-    text_to_send = ''
+    text_to_send = 'Оплата за еду за эту неделю\n\n'
     food = session.query(Food).all()
     payments = {}
     for i in food:
@@ -53,7 +53,7 @@ async def who_need_to_pay(message: Message):
                     payments[user.id] = 10
     for user_id in payments.keys():
         user = session.query(User).filter(User.id == user_id).one()
-        text_to_send += f"{user.name} должен заплатить {payments[user_id]} лари\n"
+        text_to_send += f"{user.name} - {payments[user_id]} лари\n"
     await bot.send_message(message.chat.id, text_to_send)
 
 
