@@ -53,7 +53,7 @@ async def who_need_to_pay(message: Message):
                     payments[user.id] = 10
     for user_id in payments.keys():
         user = session.query(User).filter(User.id == user_id).one()
-        text_to_send += f"{user.name} должен заплатить {payments[user_id]} лари"
+        text_to_send += f"{user.name} должен заплатить {payments[user_id]} лари\n"
     await bot.send_message(message.chat.id, text_to_send)
 
 
