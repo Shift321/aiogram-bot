@@ -27,6 +27,36 @@ async def hello(message: Message):
     await bot.send_message(message.chat.id, command_list)
 
 
+@dispatcher.message_handler(commands=['who_need_to_pay'])
+async def who_need_to_pay(message: Message):
+    text_to_send = ''
+    food = session.query(Food).all()
+    payments = {}
+    for i in food:
+        user = session.query(User).filter(User.id == i.user_id).one()
+        if i.breakfast:
+            if user.id in payments.keys():
+                payments[user.id] += 10
+            else:
+                payments[user.id] = 10
+        if i.dinner:
+            course = session.query(Dinner).filter(Dinner.food_id == i.id).one()
+            if course.first_course:
+                if user.id in payments.keys():
+                    payments[user.id] += 10
+                else:
+                    payments[user.id] = 10
+            if course.second_course:
+                if user.id in payments.keys():
+                    payments[user.id] += 10
+                else:
+                    payments[user.id] = 10
+    for user_id in payments.keys():
+        user = session.query(User).filter(User.id == user_id).one()
+        text_to_send += f"{user.name} должен заплатить {payments[user_id]} лари"
+    await bot.send_message(message.chat.id, text_to_send)
+
+
 @dispatcher.message_handler(commands=['send_message_to_all'])
 async def send_to_all(message: Message):
     if is_register(message):
