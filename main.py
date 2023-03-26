@@ -516,10 +516,10 @@ async def send_payment_info(message: Message):
     names = {"Egor": 210, "Ruslan": 90, "Дима": 150, "любовь": 30, "Юля": 180, "Илья": 50, "Станислав": 40, "Даша": 190,
              "Анна": 40}
     for name in names.keys():
-        user1 = session.query(User).filter(User.name == name).one()
-        print(f"sended to {user1.name}")
-        await bot.send_message(user1.telegram_id, f"Время платить за еду ! с тебя {names[name]} лари\n" + feed_back)
-        make_state(user1.telegram_id, "get_feedback")
+        user1 = session.query(User).filter(User.name == name).all()
+        print(f"sended to {user1[0].name}")
+        await bot.send_message(user1[0].telegram_id, f"Время платить за еду ! с тебя {names[name]} лари\n" + feed_back)
+        make_state(user1[0].telegram_id, "get_feedback")
     await bot.send_message(message.chat.id, "ГОТОВО")
 
 
