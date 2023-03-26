@@ -76,6 +76,7 @@ def send_paymet_food():
     users = session.query(User).filter(User.recieve_payment_message == False).all()
     food = session.query(Food).all()
     for user in users:
+        print("here")
         summ_to_pay = 0
         for i in food:
             if i.user_id == user.id:
@@ -160,9 +161,9 @@ while True:
     if weekday == "Sunday":
         if check_time(11, 00):
             delete_food()
-        if check_time(9, 00):
+        if check_time(12, 8):
             send_paymet_food()
-    if check_time(12, 7):
+    if check_time(11, 00):
         check_payments()
     if check_time(12, 00):
         check_cleaning()
