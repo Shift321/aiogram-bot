@@ -10,7 +10,7 @@ from handlers.handlers import register, admin, food, post_menu, time_to_pay_hand
     change_text_cleaning_handler, get_feed_back_handler, show_who_eating_for_week_handler, birth_insert_handler
 
 from models.models import User, Menu, Washes, Food, State, Cleaning, FeedBack, Dinner
-from utils.messages import messages, command_list, admin_command_list, week_days
+from utils.messages import messages, command_list, admin_command_list, week_days, feed_back
 from utils.utils import logging_tg, is_register, check_week_day, make_state, first_course_help, breakfast_help, \
     second_course_help, no_breakfast, no_first_course, no_second_course
 
@@ -60,9 +60,9 @@ async def who_need_to_pay(message: Message):
                 text_to_send += f"{user.name} - {payments[user_id]} лари\n"
             await bot.send_message(message.chat.id, text_to_send)
         else:
-            await bot.send_message(message.chat.id,"Тебе сюда нельзя")
+            await bot.send_message(message.chat.id, "Тебе сюда нельзя")
     else:
-        await bot.send_message(message.chat.id,messages['not_registered'])
+        await bot.send_message(message.chat.id, messages['not_registered'])
 
 
 @dispatcher.message_handler(commands=['send_message_to_all'])
@@ -509,6 +509,18 @@ async def show_birth(message: Message):
         await bot.send_message(message.chat.id, text_to_send)
     else:
         await bot.send_message(message.chat.id, messages['not_registered'])
+
+
+@dispatcher.message_handler(commands=['send_payment_info'])
+async def send_payment_info(message: Message):
+    names = {"Egor": 210, "Ruslan": 90, "Дима": 150, "любовь": 30, "Юля": 180, "Илья": 50, "Станислав": 40, "Даша": 190,
+             "Анна": 40}
+    for name in names.keys():
+        user1 = session.query(User).filter(User.name == name).one()
+        print(f"sended to {user1.name}")
+        await bot.send_message(user1.telegram_id, f"Время платить за еду ! с тебя {names[name]} лари\n" + feed_back)
+        make_state(user1.telegram_id, "get_feedback")
+    await bot.send_message(message.chat.id, "ГОТОВО")
 
 
 @dispatcher.poll_answer_handler()
