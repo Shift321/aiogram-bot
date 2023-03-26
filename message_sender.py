@@ -9,7 +9,7 @@ from models.models import Payments, User, Cleaning, Food, Dinner
 from utils.messages import cleaning_time, feed_back
 from utils.utils import make_state, check_week_day
 
-url = f"https://api.telegram.org/bot5888170225:AAEN6YCV3hBD6G54Kb9tHuDeRajpY_Uicug/sendMessage"
+url = f"https://api.telegram.org/bot5888170225:AAF49kmNi9IngDKghmYWUknvDhYZMYM3-Uc/sendMessage"
 
 
 def check_payments():
@@ -91,7 +91,6 @@ def send_paymet_food():
                         if course[0].second_course:
                             summ_to_pay += 10
 
-        print("here")
         if summ_to_pay == 0:
             return
         else:
@@ -163,7 +162,7 @@ while True:
             delete_food()
         if check_time(9, 00):
             send_paymet_food()
-    if check_time(11, 00):
+    if check_time(12, 7):
         check_payments()
     if check_time(12, 00):
         check_cleaning()
