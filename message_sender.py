@@ -96,8 +96,7 @@ def send_paymet_food():
             return
         else:
             send_message(user_id=user.telegram_id,
-                         text_to_send=f"Время платить за еду ! с тебя {summ_to_pay}\n" + feed_back)
-            make_state(user.telegram_id, "get_feedback")
+                         text_to_send=f"Время платить за еду ! с тебя {summ_to_pay}\n")
             user.recieve_payment_message = True
             session.flush()
             session.commit()

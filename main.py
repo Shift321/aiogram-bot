@@ -272,7 +272,7 @@ async def food_hate(message: Message):
     make_state(message.chat.id, "food")
     if is_register(message):
         await bot.send_message(message.chat.id,
-                               "Расскажи, какие продукты ты не употребляешь, а какие блюда любишь, и мы учтём это при составлении меню 🥰")
+                               feed_back)
     else:
         await bot.send_message(message.chat.id, messages['not_registered'])
 
@@ -475,12 +475,20 @@ async def show_who_eating(message: Message):
                     if course[0].second_course and course[0].first_course == False:
                         message_to_send_dinner += f"\n{user.name} {user.room_number} второе"
                 else:
-                    if course[0].first_course:
-                        message_to_send_dinner += f"\n{user.name} {user.room_number} не ест {user.food} - суп"
-                        if course[0].second_course:
-                            message_to_send_dinner += " и второе"
-                    if course[0].second_course and course[0].first_course == False:
-                        message_to_send_dinner += f"\n{user.name} {user.room_number} второе"
+                    if len(user.food) > 3:
+                        if course[0].first_course:
+                            message_to_send_dinner += f"\n{user.name} {user.room_number} не ест {user.food} - суп"
+                            if course[0].second_course:
+                                message_to_send_dinner += " и второе"
+                        if course[0].second_course and course[0].first_course == False:
+                            message_to_send_dinner += f"\n{user.name} {user.room_number} второе"
+                    else:
+                        if course[0].first_course:
+                            message_to_send_dinner += f"\n{user.name} {user.room_number} суп"
+                            if course[0].second_course:
+                                message_to_send_dinner += " и второе"
+                        if course[0].second_course and course[0].first_course == False:
+                            message_to_send_dinner += f"\n{user.name} {user.room_number} второе"
             message_to_send = message_to_send_breakfast + message_to_send_dinner
             await bot.send_message(message.chat.id, message_to_send)
     else:
