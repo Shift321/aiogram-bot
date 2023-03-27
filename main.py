@@ -7,7 +7,8 @@ from aiogram.types import Message, PollAnswer
 from database.db import Base, engine, session
 from handlers.handlers import register, admin, food, post_menu, time_to_pay_handler, wash_clothes_handler, \
     want_to_add_wish, list_of_wish, delete_user_handler, add_cleaning_handler, \
-    change_text_cleaning_handler, get_feed_back_handler, show_who_eating_for_week_handler, birth_insert_handler
+    change_text_cleaning_handler, get_feed_back_handler, show_who_eating_for_week_handler, birth_insert_handler, \
+    change_room_handler
 
 from models.models import User, Menu, Washes, Food, State, Cleaning, FeedBack, Dinner
 from utils.messages import messages, command_list, admin_command_list, week_days, feed_back
@@ -25,6 +26,16 @@ async def hello(message: Message):
     make_state(message.chat.id, "start")
     await bot.send_message(message.chat.id, messages["hello_message_collibring"])
     await bot.send_message(message.chat.id, command_list)
+
+
+@dispatcher.message_handler(commands=['change_room'])
+async def change_room(message: Message):
+    if is_register(message):
+        logging_tg(message.chat.id, message)
+        make_state(message.chat.id, "change_room")
+        await bot.send_message(message.chat.id, "Введите номер комнаты куда переехали")
+    else:
+        await bot.send_message(message.chat.id, messages['not_registered'])
 
 
 @dispatcher.message_handler(commands=['who_need_to_pay'])
@@ -586,6 +597,8 @@ async def add_user(message: Message):
         session.add(state)
         session.commit()
     else:
+        if user_state[0].state == "change_room":
+            await change_room_handler(message, bot)
         if user_state[0].state == "send_to_all":
             await birth_insert_handler(message, bot)
         if user_state[0].state == "get_feedback":

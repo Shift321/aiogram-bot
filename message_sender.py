@@ -51,25 +51,23 @@ def check_cleaning():
             if "," in str(cleaning.room_number):
                 for room_number in cleaning.room_number.split(","):
                     users = session.query(User).filter(User.room_number == room_number).all()
-                    for user in users:
-                        make_state(user.telegram_id, "added_cleaning")
-                        send_message(user_id=user.telegram_id, text_to_send=cleaning_time)
-                        if make_text_for_cleaning() is not None:
-                            send_message(user_id=user.telegram_id, text_to_send=make_text_for_cleaning())
-                        cleaning.sended = True
-                        session.flush()
-                        session.commit()
-            else:
-                room_number = cleaning.room_number
-                users = session.query(User).filter(User.room_number == room_number).all()
-                for user in users:
-                    make_state(user.telegram_id, "added_cleaning")
-                    send_message(user_id=user.telegram_id, text_to_send=cleaning_time)
+                    make_state(users[0].telegram_id, "added_cleaning")
+                    send_message(user_id=users[0].telegram_id, text_to_send=cleaning_time)
                     if make_text_for_cleaning() is not None:
                         send_message(user_id=user.telegram_id, text_to_send=make_text_for_cleaning())
                     cleaning.sended = True
                     session.flush()
                     session.commit()
+            else:
+                room_number = cleaning.room_number
+                users = session.query(User).filter(User.room_number == room_number).all()
+                make_state(users[0].telegram_id, "added_cleaning")
+                send_message(user_id=users[0].telegram_id, text_to_send=cleaning_time)
+                if make_text_for_cleaning() is not None:
+                    send_message(user_id=user.telegram_id, text_to_send=make_text_for_cleaning())
+                cleaning.sended = True
+                session.flush()
+                session.commit()
 
 
 def send_paymet_food():

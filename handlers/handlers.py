@@ -333,3 +333,15 @@ async def birth_insert_handler(message, bot):
     for user in users:
         await bot.send_message(user.telegram_id, message.text)
     await bot.send_message(message.chat.id, "Готово")
+
+
+async def change_room_handler(message,bot):
+    user = session.query(User).filter(User.telegram_id == message.chat.id).one()
+    if message.text.is_digit():
+        user.room_number = int(message.text)
+        session.flush()
+        session.commit()
+        await bot.send_message(message.chat.id, "Готово")
+        make_state(message.chat.id,"start")
+    else:
+        await bot.send_message(message.chat.id,"вы ввели не число попробуйте еще раз")
