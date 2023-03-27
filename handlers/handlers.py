@@ -337,7 +337,7 @@ async def birth_insert_handler(message, bot):
 
 async def change_room_handler(message,bot):
     user = session.query(User).filter(User.telegram_id == message.chat.id).one()
-    if message.text.is_digit():
+    if message.text.isdigit():
         user.room_number = int(message.text)
         session.flush()
         session.commit()
