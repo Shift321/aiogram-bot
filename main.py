@@ -449,7 +449,10 @@ async def show_who_eating(message: Message):
                 if not user.food:
                     message_to_send_breakfast += f"{user.name} {user.room_number}\n"
                 else:
-                    message_to_send_breakfast += f"{user.name} {user.room_number} не ест {user.food}\n"
+                    if len(user.food) > 3:
+                        message_to_send_breakfast += f"{user.name} {user.room_number} не ест {user.food}\n"
+                    else:
+                        message_to_send_breakfast += f"{user.name} {user.room_number}\n"
 
             counter_first_course = 0
             counter_second_course = 0
