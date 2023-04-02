@@ -38,6 +38,20 @@ async def change_room(message: Message):
         await bot.send_message(message.chat.id, messages['not_registered'])
 
 
+@dispatcher.message_handler(commands=['send_message_about_food_to_all'])
+async def send_message_about_food(message: Message):
+    users = {"Алина": 20 + 20 + 20 + 20 + 20 + 20 + 20, "Дима": 30 * 7, "Егор": 20 + 20 + 20 + 20 + 20 + 20 + 20,
+             "Юля": 0 + 30 + 30 + 30 + 30 + 30, "Даша": 30 * 7, "Ruslan": 20 + 20 + 20 + 10 + 10 + 20 + 10,
+             "Egor": 30 + 30 + 30 + 30 + 30 + 30 + 30, "Павел": 10 + 10 + 30 + 10,
+             "Станислав": 10 + 20 + 20 + 10 + 20 + 20,
+             "Анастасия": 20}
+    for i in users.keys():
+        user = session.query(User).filter(User.name == i).one()
+        await bot.send_message(user.telegram_id, f"С тебя {users[i]} лари за еду")
+
+    await bot.send_message(message.chat.id, "Готово")
+
+
 @dispatcher.message_handler(commands=['who_need_to_pay'])
 async def who_need_to_pay(message: Message):
     if is_register(message):
