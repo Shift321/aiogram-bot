@@ -46,8 +46,8 @@ async def send_message_about_food(message: Message):
              "Станислав": 10 + 20 + 20 + 10 + 20 + 20,
              "Анастасия": 20}
     for i in users.keys():
-        user = session.query(User).filter(User.name == i).one()
-        await bot.send_message(user.telegram_id, f"С тебя {users[i]} лари за еду")
+        user = session.query(User).filter(User.name == i).all()
+        await bot.send_message(user[0].telegram_id, f"С тебя {users[i]} лари за еду")
 
     await bot.send_message(message.chat.id, "Готово")
 
