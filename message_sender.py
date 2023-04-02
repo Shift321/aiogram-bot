@@ -51,13 +51,16 @@ def check_cleaning():
             if "," in str(cleaning.room_number):
                 for room_number in cleaning.room_number.split(","):
                     users = session.query(User).filter(User.room_number == room_number).all()
-                    make_state(users[0].telegram_id, "added_cleaning")
-                    send_message(user_id=users[0].telegram_id, text_to_send=cleaning_time)
-                    if make_text_for_cleaning() is not None:
-                        send_message(user_id=user.telegram_id, text_to_send=make_text_for_cleaning())
-                    cleaning.sended = True
-                    session.flush()
-                    session.commit()
+                    if len(users) == 0:
+                        pass
+                    else:
+                        make_state(users[0].telegram_id, "added_cleaning")
+                        send_message(user_id=users[0].telegram_id, text_to_send=cleaning_time)
+                        if make_text_for_cleaning() is not None:
+                            send_message(user_id=user.telegram_id, text_to_send=make_text_for_cleaning())
+                        cleaning.sended = True
+                        session.flush()
+                        session.commit()
             else:
                 room_number = cleaning.room_number
                 users = session.query(User).filter(User.room_number == room_number).all()
@@ -156,9 +159,9 @@ while True:
             user.recieve_payment_message = False
         tumbler = False
     if weekday == "Sunday":
-        if check_time(11, 00):
+        if check_time(12, 00):
             delete_food()
-        if check_time(12, 8):
+        if check_time(10, 20):
             send_paymet_food()
     if check_time(11, 00):
         check_payments()
