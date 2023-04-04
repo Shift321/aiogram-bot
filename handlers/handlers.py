@@ -352,13 +352,16 @@ def show_birth_handler():
     users = session.query(User).all()
     birth_user = {}
     for user in users:
-        birthday = user.birth.replace(year=now.year)
-        if birthday < now:
-            if birthday is not None:
-                birthday = birthday.replace(year=now.year + 1)
-                birth_user[user.id] = (birthday - now).days
-            else:
-                pass
+        if user.birth is not None:
+            birthday = user.birth.replace(year=now.year)
+            if birthday < now:
+                if birthday is not None:
+                    birthday = birthday.replace(year=now.year + 1)
+                    birth_user[user.id] = (birthday - now).days
+                else:
+                    pass
+        else:
+            pass
     users = sorted(users, key=lambda user: birth_user[user.id])
     message = 'Ближайшие дни рождения:\n\n'
     for user in users:
