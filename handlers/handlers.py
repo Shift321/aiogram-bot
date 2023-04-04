@@ -348,7 +348,7 @@ async def change_room_handler(message, bot):
 
 
 def show_birth_handler():
-    now = datetime.now()
+    now = datetime.now().date()
 
     # Get all the users from the database
     users = session.query(User).all()
