@@ -243,7 +243,7 @@ async def show_who_eating_for_week_handler():
         else:
             course = session.query(Dinner).filter(Dinner.food_id == i.id).all()
             if len(course) == 0:
-                course = Dinner(food_id = i.id)
+                course = Dinner(food_id=i.id)
                 session.add(course)
                 session.commit()
             if i.name_of_week_day == "понедельник":
@@ -335,13 +335,34 @@ async def birth_insert_handler(message, bot):
     await bot.send_message(message.chat.id, "Готово")
 
 
-async def change_room_handler(message,bot):
+async def change_room_handler(message, bot):
     user = session.query(User).filter(User.telegram_id == message.chat.id).one()
     if message.text.isdigit():
         user.room_number = int(message.text)
         session.flush()
         session.commit()
         await bot.send_message(message.chat.id, "Готово")
-        make_state(message.chat.id,"start")
+        make_state(message.chat.id, "start")
     else:
-        await bot.send_message(message.chat.id,"вы ввели не число попробуйте еще раз")
+        await bot.send_message(message.chat.id, "вы ввели не число попробуйте еще раз")
+
+
+def show_birth_handler():
+    now = datetime.now()
+    users = session.query(User).all()
+    birth_user = {}
+    for user in users:
+        birthday = user.birth.replace(year=now.year)
+        if birthday < now:
+            birthday = birthday.replace(year=now.year + 1)
+        birth_user[user.id] = (birthday - now).days
+    users = sorted(users, key=lambda user: birth_user[user.id])
+    message = 'Ближайшие дни рождения:\n\n'
+    for user in users:
+        if birth_user[user.id] == 0:
+            message += f"У {user.name} из {user.room_number} cегодня день рождения!!\n"
+        elif birth_user[user.id] == 1:
+            message += f"У {user.name} из {user.room_number} завтра день рождения!!\n"
+        else:
+            message += f"У {user.name} из {user.room_number} день рождения через {birth_user[user.id]}\n"
+    return message
