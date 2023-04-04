@@ -374,3 +374,14 @@ def show_birth_handler():
         else:
             message += f"У {user.name} из {user.room_number} номера  день рождения через {days_until_birthdays[user]} дней ({user.birth})\n"
     return message
+
+
+async def add_birthday_handler(message, bot):
+    try:
+        user = session.query(User).filter(User.telegram_id == message.chat.id).one()
+        user.birth = datetime.strptime(message.text, "%d.%m.%Y").date()
+        session.flush()
+        session.commit()
+        await bot.send_message(message.chat.id, "Готово")
+    except:
+        await bot.send_message(message.chat.id, "Не правильный формат ввода")

@@ -8,7 +8,7 @@ from database.db import Base, engine, session
 from handlers.handlers import register, admin, food, post_menu, time_to_pay_handler, wash_clothes_handler, \
     want_to_add_wish, list_of_wish, delete_user_handler, add_cleaning_handler, \
     change_text_cleaning_handler, get_feed_back_handler, show_who_eating_for_week_handler, birth_insert_handler, \
-    change_room_handler, show_birth_handler
+    change_room_handler, show_birth_handler, add_birthday_handler
 
 from models.models import User, Menu, Washes, Food, State, Cleaning, FeedBack, Dinner
 from utils.messages import messages, command_list, admin_command_list, week_days, feed_back
@@ -533,6 +533,15 @@ async def show_birth(message: Message):
         await bot.send_message(message.chat.id, messages['not_registered'])
 
 
+@dispatcher.message_handler(commands=['add_birthday'])
+async def add_birthday(message: Message):
+    if is_register(message):
+        await bot.send_message(message.chat.id, "Введите дату своего рождения в формате 07.03.1999")
+        make_state(message.chat.id, "add_birthday")
+    else:
+        await bot.send_message(message.chat.id, messages['not_registered'])
+
+
 @dispatcher.message_handler(commands=['send_payment_info'])
 async def send_payment_info(message: Message):
     names = {"Egor": 210, "Ruslan": 90, "Дима": 150, "любовь": 30, "Юля": 180, "Илья": 50, "Станислав": 40, "Даша": 190,
@@ -597,6 +606,8 @@ async def add_user(message: Message):
         session.add(state)
         session.commit()
     else:
+        if user_state[0].state == "add_birthday":
+            await add_birthday_handler(message, bot)
         if user_state[0].state == "change_room":
             await change_room_handler(message, bot)
         if user_state[0].state == "send_to_all":
