@@ -349,26 +349,26 @@ async def change_room_handler(message, bot):
 
 def show_birth_handler():
     now = datetime.now()
+
+    # Get all the users from the database
     users = session.query(User).all()
-    birth_user = {}
+
+    # Calculate the number of days until each user's birthday
+    days_until_birthdays = {}
     for user in users:
-        if user.birth is not None:
-            birthday = user.birth.replace(year=now.year)
-            if birthday < now.date():
-                if birthday is not None:
-                    birthday = birthday.replace(year=now.year + 1)
-                    birth_user[user.id] = (birthday - now.date()).days
-                else:
-                    pass
-        else:
-            pass
-    users = sorted(users, key=lambda user: birth_user[user.id])
+        birthday = user.birth.replace(year=now.year)
+        if birthday < now:
+            birthday = birthday.replace(year=now.year + 1)
+        days_until_birthdays[user] = (birthday - now).days
+
+    # Sort the users based on the number of days until their birthday
+    users = sorted(days_until_birthdays.keys(), key=lambda user: days_until_birthdays[user])
     message = 'Ближайшие дни рождения:\n\n'
     for user in users:
-        if birth_user[user.id] == 0:
+        if days_until_birthdays[user] == 0:
             message += f"У {user.name} из {user.room_number} cегодня день рождения!!\n"
-        elif birth_user[user.id] == 1:
+        elif days_until_birthdays[user] == 1:
             message += f"У {user.name} из {user.room_number} завтра день рождения!!\n"
         else:
-            message += f"У {user.name} из {user.room_number} день рождения через {birth_user[user.id]}\n"
+            message += f"У {user.name} из {user.room_number} день рождения через {days_until_birthdays[user]}\n"
     return message
