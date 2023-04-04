@@ -356,11 +356,13 @@ def show_birth_handler():
     # Calculate the number of days until each user's birthday
     days_until_birthdays = {}
     for user in users:
-        birthday = user.birth.replace(year=now.year)
-        if birthday < now:
-            birthday = birthday.replace(year=now.year + 1)
-        days_until_birthdays[user] = (birthday - now).days
-
+        if user.birth is not None:
+            birthday = user.birth.replace(year=now.year)
+            if birthday < now:
+                birthday = birthday.replace(year=now.year + 1)
+            days_until_birthdays[user] = (birthday - now).days
+        else:
+            pass
     # Sort the users based on the number of days until their birthday
     users = sorted(days_until_birthdays.keys(), key=lambda user: days_until_birthdays[user])
     message = 'Ближайшие дни рождения:\n\n'
