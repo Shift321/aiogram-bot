@@ -357,7 +357,7 @@ def show_birth_handler():
             if birthday < now.date():
                 if birthday is not None:
                     birthday = birthday.replace(year=now.year + 1)
-                    birth_user[user.id] = (birthday - now).days
+                    birth_user[user.id] = (birthday - now.date()).days
                 else:
                     pass
         else:
