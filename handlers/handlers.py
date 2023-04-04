@@ -368,9 +368,9 @@ def show_birth_handler():
     message = 'Ближайшие дни рождения:\n\n'
     for user in users:
         if days_until_birthdays[user] == 0:
-            message += f"У {user.name} из {user.room_number} cегодня день рождения!!\n"
+            message += f"У {user.name} из {user.room_number} номера  cегодня день рождения!!\n"
         elif days_until_birthdays[user] == 1:
-            message += f"У {user.name} из {user.room_number} завтра день рождения!!\n"
+            message += f"У {user.name} из {user.room_number} номера завтра день рождения!!\n"
         else:
-            message += f"У {user.name} из {user.room_number} день рождения через {days_until_birthdays[user]}\n"
+            message += f"У {user.name} из {user.room_number} номера  день рождения через {days_until_birthdays[user]} дней\n"
     return message
