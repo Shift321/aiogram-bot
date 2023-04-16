@@ -161,7 +161,7 @@ while True:
     if weekday == "Sunday":
         if check_time(12, 00):
             delete_food()
-        if check_time(10, 31):
+        if check_time(10, 35):
             send_paymet_food()
     if check_time(11, 00):
         check_payments()
