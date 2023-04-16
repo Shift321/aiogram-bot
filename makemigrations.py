@@ -11,3 +11,5 @@ def send_not():
         user.recieve_payment_message = False
         session.flush()
         session.commit()
+
+send_not()
