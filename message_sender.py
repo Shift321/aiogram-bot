@@ -74,13 +74,13 @@ def check_cleaning():
 
 
 def send_paymet_food():
-    users = session.query(User).filter(User.recieve_payment_message == False).all()
+    users_food = session.query(User).filter(User.recieve_payment_message == False).all()
     food = session.query(Food).all()
-    for user in users:
-        print(f"senging to {user.name} {user.room_number}")
+    for user_food in users_food:
+        print(f"senging to {user_food.name} {user_food.room_number}")
         summ_to_pay = 0
         for i in food:
-            if i.user_id == user.id:
+            if i.user_id == user_food.id:
                 if i.breakfast:
                     summ_to_pay += 10
                 if i.dinner:
@@ -92,13 +92,12 @@ def send_paymet_food():
                             summ_to_pay += 10
                         if course[0].second_course:
                             summ_to_pay += 10
-
         if summ_to_pay == 0:
-            return
+            pass
         else:
-            send_message(user_id=user.telegram_id,
+            send_message(user_id=user_food.telegram_id,
                          text_to_send=f"Время платить за еду ! с тебя {summ_to_pay}\n")
-            user.recieve_payment_message = True
+            user_food.recieve_payment_message = True
             session.flush()
             session.commit()
 
