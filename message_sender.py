@@ -77,7 +77,7 @@ def send_paymet_food():
     users = session.query(User).filter(User.recieve_payment_message == False).all()
     food = session.query(Food).all()
     for user in users:
-        print("here")
+        print(f"senging to {user.name} {user.room_number}")
         summ_to_pay = 0
         for i in food:
             if i.user_id == user.id:
