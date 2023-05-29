@@ -8,7 +8,7 @@ from database.db import Base, engine, session
 from handlers.handlers import register, admin, food, post_menu, time_to_pay_handler, wash_clothes_handler, \
     want_to_add_wish, list_of_wish, delete_user_handler, add_cleaning_handler, \
     change_text_cleaning_handler, get_feed_back_handler, show_who_eating_for_week_handler, birth_insert_handler, \
-    change_room_handler, show_birth_handler, add_birthday_handler
+    change_room_handler, show_birth_handler, add_birthday_handler, show_user_food_handler
 
 from models.models import User, Menu, Washes, Food, State, Cleaning, FeedBack, Dinner
 from utils.messages import messages, command_list, admin_command_list, week_days, feed_back
@@ -26,6 +26,13 @@ async def hello(message: Message):
     make_state(message.chat.id, "start")
     await bot.send_message(message.chat.id, messages["hello_message_collibring"])
     await bot.send_message(message.chat.id, command_list)
+
+
+@dispatcher.message_handler(commands=['show_user_food'])
+async def show_user_food(message: Message):
+    logging_tg(message.chat.id, message)
+    make_state(message.chat.id, "show_user_food")
+    await bot.send_message(message.chat.id, "Введите имя")
 
 
 @dispatcher.message_handler(commands=['change_room'])
@@ -634,6 +641,8 @@ async def add_user(message: Message):
             await want_to_add_wish(message, bot)
         if user_state[0].state == "delete_user":
             await delete_user_handler(message, bot)
+        if user_state[0].state == "show_user_food":
+            await show_user_food_handler(message,bot)
 
 
 executor.start_polling(dispatcher)

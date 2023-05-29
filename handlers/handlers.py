@@ -385,3 +385,22 @@ async def add_birthday_handler(message, bot):
         await bot.send_message(message.chat.id, "Готово")
     except:
         await bot.send_message(message.chat.id, "Не правильный формат ввода")
+
+
+async def show_user_food_handler(message, bot):
+    user = session.query(User).filter(User.name == message.text).one()
+    food = session.query(Food).filter(Food.user_id == user.id).all()
+    text = ""
+    for i in food:
+        breakfast = "Да" if i.breakfast else "нет"
+        dinner = "Да" if i.dinner else "нет"
+        text += f"День : {i.name_of_week_day} завтрак {breakfast} обед {dinner}"
+        if i.dinner:
+            dinner = session.query(Dinner).filter(Dinner.food_id == i.id).all()
+            first = "Да" if dinner[0] else "нет"
+            second = "Да" if dinner[0] else "нет"
+            text += f"первое {first} второе {second}\n\n"
+        else:
+            text += "\n\n"
+
+    await bot.send_message(message.chat.id, text)
