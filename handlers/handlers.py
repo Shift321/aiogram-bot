@@ -397,10 +397,18 @@ async def show_user_food_handler(message, bot):
         text += f"День : {i.name_of_week_day} завтрак {breakfast} обед {dinner}"
         if i.dinner:
             dinner = session.query(Dinner).filter(Dinner.food_id == i.id).all()
-            first = "Да" if dinner[0] else "нет"
-            second = "Да" if dinner[0] else "нет"
+            first = "Да" if dinner[0].first_course else "нет"
+            second = "Да" if dinner[0].second_course else "нет"
             text += f"первое {first} второе {second}\n\n"
         else:
             text += "\n\n"
 
     await bot.send_message(message.chat.id, text)
+
+
+async def food_reminder_handler(message, bot):
+    admins = session.query(User).filter(User.is_admin).all()
+    user = session.query(User).filter(User.telegram_id == message.chat.id).one()
+    text = f"Предпочтения пользователя {user.name} из комнаты {user.room_number}:\n\n{message.text}"
+    for admin in admins:
+        await bot.send_message(message.chat.id, text)

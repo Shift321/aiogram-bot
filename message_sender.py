@@ -108,6 +108,14 @@ def send_paymet_food():
             session.commit()
 
 
+def send_food_reminder():
+    users = session.query(User).all()
+    for user in users:
+        send_message(user_id=user.telegram_id,
+                     text_to_send="Напиши пожелания по меню на следующую неделю: какие блюда понравились, а какие больше не готовить, что нового хотелось бы попробовать?")
+        make_state(chat_id=user.telegram_id, state_name='food_reminder')
+
+
 def send_message(user_id, text_to_send):
     data = {
         "chat_id": user_id,
@@ -143,6 +151,14 @@ def check_time(hour, minute):
         return False
 
 
+def delete_cleaning():
+    users = session.query(User).all()
+    for user in users:
+        user.cleaning_prefers = ""
+        session.flush()
+        session.commit()
+
+friday_sended = False
 while True:
     today = datetime.datetime.now().date()
     weekday = today.strftime("%A")
@@ -165,6 +181,7 @@ while True:
         tumbler = False
     if weekday == "Sunday":
         if check_time(13, 00):
+            delete_cleaning()
             delete_food()
         if check_time(12, 36):
             send_paymet_food()
@@ -172,4 +189,10 @@ while True:
         check_payments()
     if check_time(12, 00):
         check_cleaning()
+    if weekday == "Saturday":
+        friday_sended = False
+    if weekday == "Friday" and friday_sended == False:
+        send_food_reminder()
+        friday_sended = True
+
     time.sleep(5)
