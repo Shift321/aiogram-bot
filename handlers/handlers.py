@@ -412,3 +412,4 @@ async def food_reminder_handler(message, bot):
     text = f"Предпочтения пользователя {user.name} из комнаты {user.room_number}:\n\n{message.text}"
     for admin in admins:
         await bot.send_message(message.chat.id, text)
+    await bot.send_message(message.chat.id, "Спасибо ваши предпочтения записаны")
