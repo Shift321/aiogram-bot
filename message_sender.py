@@ -192,7 +192,8 @@ while True:
     if weekday == "Saturday":
         friday_sended = False
     if weekday == "Friday" and friday_sended == False:
-        send_food_reminder()
+        if check_time(10, 20):
+            send_food_reminder()
         friday_sended = True
 
     time.sleep(5)
