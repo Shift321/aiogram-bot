@@ -347,7 +347,7 @@ async def want_to_add(message: Message):
         make_state(message.chat.id, "want_to_add")
 
 
-@dispatcher.message_handler(commands=['show_wishes'])
+@dispatcher.message_handler(commands=['show_feed_backs'])
 async def show_wish(message: Message):
     logging_tg(message.chat.id, message)
     user = session.query(User).filter(User.telegram_id == message.chat.id).all()
@@ -391,23 +391,6 @@ async def events(message: Message):
     logging_tg(message.chat.id, message)
     if is_register(message):
         await bot.send_message(message.chat.id, messages['events'])
-    else:
-        await bot.send_message(message.chat.id, messages['not_registered'])
-
-
-@dispatcher.message_handler(commands=['show_feed_backs'])
-async def show_feed_back(message: Message):
-    user = session.query(User).filter(User.telegram_id == message.chat.id).all()
-    if is_register(message):
-        user = session.query(User).filter(User.telegram_id == message.chat.id).one()
-        if user.is_admin:
-            feed_backs = session.query(Wishes).all()
-            text_to_send = ""
-            for i in feed_backs:
-                text_to_send += f"{i.name} фидбэк:{i.text}\n"
-            await bot.send_message(message.chat.id, text_to_send)
-        else:
-            await bot.send_message(message.chat.id, "Тебе сюда нельзя!")
     else:
         await bot.send_message(message.chat.id, messages['not_registered'])
 
