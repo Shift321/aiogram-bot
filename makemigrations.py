@@ -1,15 +1,18 @@
 from sqlalchemy import MetaData, Date, Integer, String
 from migrate.versioning.schema import Table, Column
 
-from database.db import engine, session
-from models.models import User
+from database.db import session
+from models.models import Wishes
 
+row = "ALTER TABLE wishes ADD COLUMN user_id INTEGER"
+row2 = "ALTER TABLE wishes ADD COLUMN date_of_wish DATE"
 
-def send_not():
-    users = session.query(User).filter(User.recieve_payment_message == True).all()
-    for user in users:
-        user.recieve_payment_message = False
-        session.flush()
-        session.commit()
+wishes = session.query(Wishes).all()
 
-send_not()
+for i in wishes:
+    session.delete(i)
+    session.flush()
+    session.commit()
+
+session.execute(row)
+session.execute(row2)

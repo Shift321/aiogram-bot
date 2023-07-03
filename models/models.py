@@ -41,7 +41,8 @@ class Wishes(Base):
     __tablename__ = "wishes"
 
     id: int = Column(Integer, primary_key=True, index=True)
-    name_of_user: str = Column(String)
+    user_id: str = Column(Integer)
+    date_of_wish: date = Column(Date)
     text: str = Column(String)
 
 

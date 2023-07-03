@@ -140,7 +140,7 @@ async def wash_clothes_handler(message, bot):
 
 async def want_to_add_wish(message, bot):
     user = session.query(User).filter(User.telegram_id == message.chat.id).one()
-    wish = Wishes(name_of_user=user.name, text=message.text)
+    wish = Wishes(user_id=user.id, text=message.text,date_of_wish=date.today())
     session.add(wish)
     session.commit()
     await bot.send_message(message.chat.id, "Ваше пожелание записано!")
@@ -152,7 +152,8 @@ async def list_of_wish():
     wishes = session.query(Wishes).all()
     text = ""
     for wish in wishes:
-        text += f"Имя :{wish.name_of_user}, Пожелание: {wish.text}" + "\n"
+        user = session.query(User).filter(User.id == wish.user_id).one()
+        text += f"Имя :{user.name}, комната:{user.room_number} дата пожелания:{wish.date_of_wish} \nПожелание: {wish.text}" + "\n\n"
     return text
 
 
