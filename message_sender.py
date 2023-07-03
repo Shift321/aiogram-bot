@@ -50,30 +50,30 @@ def check_cleaning():
         for cleaning in cleanings:
             if "," in str(cleaning.room_number):
                 for room_number in cleaning.room_number.split(","):
-                    users = session.query(User).filter(User.room_number == room_number).all()
-                    if len(users) == 0:
+                    users_cleaning_rooms = session.query(User).filter(User.room_number == room_number).all()
+                    if len(users_cleaning_rooms) == 0:
                         pass
                     else:
-
-                        for user in users:
-                            make_state(user.telegram_id, "added_cleaning")
-                            send_message(user_id=user.telegram_id, text_to_send=cleaning_time)
-                            if make_text_for_cleaning() is not None:
-                                send_message(user_id=user.telegram_id, text_to_send=make_text_for_cleaning())
+                        for i in users_cleaning_rooms:
+                            make_state(i.telegram_id, "added_cleaning")
+                            send_message(user_id=i.telegram_id, text_to_send=cleaning_time)
+                            text_for_cleaning = make_text_for_cleaning()
+                            if text_for_cleaning is not None:
+                                send_message(user_id=i.telegram_id, text_to_send=text_for_cleaning)
                             cleaning.sended = True
                             session.flush()
                             session.commit()
             else:
                 room_number = cleaning.room_number
-                users = session.query(User).filter(User.room_number == room_number).all()
-                if len(users) == 0:
+                users_cleaning_one_room = session.query(User).filter(User.room_number == room_number).all()
+                if len(users_cleaning_one_room) == 0:
                     pass
                 else:
-                    for user in users:
-                        make_state(user.telegram_id, "added_cleaning")
-                        send_message(user_id=user.telegram_id, text_to_send=cleaning_time)
+                    for j in users_cleaning_one_room:
+                        make_state(j.telegram_id, "added_cleaning")
+                        send_message(user_id=j.telegram_id, text_to_send=cleaning_time)
                         if make_text_for_cleaning() is not None:
-                            send_message(user_id=user.telegram_id, text_to_send=make_text_for_cleaning())
+                            send_message(user_id=j.telegram_id, text_to_send=make_text_for_cleaning())
                         cleaning.sended = True
                         session.flush()
                         session.commit()
@@ -157,6 +157,7 @@ def delete_cleaning():
         user.cleaning_prefers = ""
         session.flush()
         session.commit()
+
 
 friday_sended = False
 while True:
