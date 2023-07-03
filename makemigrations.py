@@ -1,34 +1,15 @@
-from sqlalchemy import MetaData, Date, Integer, String
+from sqlalchemy import String, MetaData, Integer, Date
 from migrate.versioning.schema import Table, Column
 
-from database.db import session
-from models.models import Wishes
+from database.db import engine
 
-row = """
-ALTER TABLE wishes
-ADD COLUMN user_id INTEGER,
-ADD COLUMN date_of_wish DATE;
+db_engine = engine
+db_meta = MetaData(bind=db_engine)
 
-
-UPDATE wishes
-SET user_id = 0, -- Specify the appropriate default value
-    date_of_wish = '1970-01-01'; -- Specify the appropriate default date
-
-
-ALTER TABLE wishes
-DROP COLUMN name_of_user;
-
-
-ALTER TABLE wishes
-RENAME TO updated_wishes;"""
-
-
-wishes = session.query(Wishes).all()
-
-for i in wishes:
-    session.delete(i)
-    session.flush()
-    session.commit()
-
-session.execute(row)
-
+table = Table('wishes', db_meta)
+col = Column('name_of_user', String)
+col2 = Column('user_id', Integer)
+col3 = Column('date_of_wish', Date)
+col.drop()
+col2.create(table)
+col3.create(table)
