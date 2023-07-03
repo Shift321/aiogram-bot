@@ -10,7 +10,7 @@ from handlers.handlers import register, admin, food, post_menu, time_to_pay_hand
     change_text_cleaning_handler, get_feed_back_handler, show_who_eating_for_week_handler, birth_insert_handler, \
     change_room_handler, show_birth_handler, add_birthday_handler, show_user_food_handler, food_reminder_handler
 
-from models.models import User, Menu, Washes, Food, State, Cleaning, FeedBack, Dinner
+from models.models import User, Menu, Washes, Food, State, Cleaning, FeedBack, Dinner, Wishes
 from utils.messages import messages, command_list, admin_command_list, week_days, feed_back
 from utils.utils import logging_tg, is_register, check_week_day, make_state, first_course_help, breakfast_help, \
     second_course_help, no_breakfast, no_first_course, no_second_course
@@ -401,11 +401,10 @@ async def show_feed_back(message: Message):
     if is_register(message):
         user = session.query(User).filter(User.telegram_id == message.chat.id).one()
         if user.is_admin:
-            feed_backs = session.query(FeedBack).all()
+            feed_backs = session.query(Wishes).all()
             text_to_send = ""
             for i in feed_backs:
-                user = session.query(User).filter(User.telegram_id == i.chat_id).one()
-                text_to_send += f"{user.name} {user.room_number} фидбэк:{i.text}\n"
+                text_to_send += f"{i.name} фидбэк:{i.text}\n"
             await bot.send_message(message.chat.id, text_to_send)
         else:
             await bot.send_message(message.chat.id, "Тебе сюда нельзя!")
@@ -551,8 +550,6 @@ async def add_birthday(message: Message):
 
 @dispatcher.message_handler(commands=['send_payment_info'])
 async def send_payment_info(message: Message):
-    names = {"Egor": 210, "Ruslan": 90, "Дима": 150, "любовь": 30, "Юля": 180, "Илья": 50, "Станислав": 40, "Даша": 190,
-             "Анна": 40}
     for name in names.keys():
         user1 = session.query(User).filter(User.name == name).all()
         print(f"sended to {user1[0].name}")
@@ -605,9 +602,6 @@ async def poll_answer(poll_answer: PollAnswer):
                 session.commit()
 
 
-
-
-
 @dispatcher.message_handler()
 async def add_user(message: Message):
     user_state = session.query(State).filter(State.chat_id == message.chat.id).all()
@@ -645,9 +639,9 @@ async def add_user(message: Message):
         if user_state[0].state == "delete_user":
             await delete_user_handler(message, bot)
         if user_state[0].state == "show_user_food":
-            await show_user_food_handler(message,bot)
+            await show_user_food_handler(message, bot)
         if user_state[0].state == "food_reminder":
-            await food_reminder_handler(message,bot)
+            await food_reminder_handler(message, bot)
 
 
 executor.start_polling(dispatcher)
