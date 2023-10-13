@@ -447,12 +447,11 @@ async def show_who_eating(message: Message):
             for i in eat:
                 try:
                     user = session.query(User).filter(User.id == i.user_id).one()
-
                     if not user.food:
                         message_to_send_breakfast += f"{user.name} {user.room_number}\n"
                     else:
                         if len(user.food) > 3:
-                            message_to_send_breakfast += f"{user.name} {user.room_number} не ест {user.food}\n"
+                            message_to_send_breakfast += f"{user.name} {user.room_number}\n"
                         else:
                             message_to_send_breakfast += f"{user.name} {user.room_number}\n"
                 except:
@@ -484,7 +483,7 @@ async def show_who_eating(message: Message):
                 else:
                     if len(user.food) > 3:
                         if course[0].first_course:
-                            message_to_send_dinner += f"\n{user.name} {user.room_number} не ест {user.food} - суп"
+                            message_to_send_dinner += f"\n{user.name} {user.room_number} - суп"
                             if course[0].second_course:
                                 message_to_send_dinner += " и второе"
                         if course[0].second_course and course[0].first_course == False:
@@ -535,11 +534,21 @@ async def add_birthday(message: Message):
 async def send_payment_info(message: Message):
     for name in names.keys():
         user1 = session.query(User).filter(User.name == name).all()
-        print(f"sended to {user1[0].name}")
         await bot.send_message(user1[0].telegram_id, f"Время платить за еду ! с тебя {names[name]} лари\n" + feed_back)
         make_state(user1[0].telegram_id, "get_feedback")
     await bot.send_message(message.chat.id, "ГОТОВО")
 
+
+@dispatcher.message_handler(commands=['watch_prefers'])
+async def send_prefers(message: Message):
+    users = session.query(User).all()
+    message_for_send = "Список пожеланий по еде :\n"
+    for user in users:
+        if not user.food:
+            pass
+        else:
+            message_for_send += f"{user.name} из {user.room_number}. Предпочтения :{user.food}\n\n"
+    await bot.send_message(message.chat.id,message_for_send)
 
 @dispatcher.poll_answer_handler()
 async def poll_answer(poll_answer: PollAnswer):
