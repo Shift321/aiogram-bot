@@ -1,7 +1,8 @@
 from datetime import datetime, date, timedelta
 
 from database.db import session
-from models.models import User, Menu, Washes, Wishes, Payments, Cleaning, Food, FeedBack, Dinner, TvReserve
+from models.models import User, Menu, Washes, Wishes, Payments, Cleaning, Food, FeedBack, Dinner, TvReserve, \
+    LectionReserve
 from utils.utils import make_state, check_week_day, what_to_eat_dinner
 
 
@@ -174,6 +175,50 @@ async def reserve_tv_handler(message, bot):
                     tvreserve = TvReserve(time_start=time_start, time_end=time_end, date=date.today(),
                                           name=user.name)
                     session.add(tvreserve)
+                    session.commit()
+                    await bot.send_message(message.chat.id, "Готово")
+                    make_state(message.chat.id, "start")
+                else:
+                    await bot.send_message(message.chat.id, "Данное время занято введите другое время")
+
+
+async def lection_reserve_handler(message, bot):
+    time = message.text.split("-")
+    format_ok = True
+    try:
+        time_start = datetime.strptime(time[0], '%H:%M').time()
+        time_end = datetime.strptime(time[1], '%H:%M').time()
+    except:
+        format_ok = False
+        await bot.send_message(message.chat.id, "Неправильный формат ввода")
+    if format_ok:
+        if time_start > time_end:
+            await bot.send_message(message.chat.id, "Вы ввели неправильное время попробуйте еще раз")
+        else:
+            user = session.query(User).filter(User.telegram_id == message.chat.id).one()
+            can_add_up = 0
+            can_add_down = 0
+            lection_reserves = session.query(LectionReserve).filter(LectionReserve.date == date.today()).all()
+            if len(lection_reserves) == 0:
+                lection_reserve = LectionReserve(time_start=time_start, time_end=time_end, date=date.today(),
+                                                 name=user.name)
+                session.add(lection_reserve)
+                session.commit()
+                await bot.send_message(message.chat.id, "Готово")
+
+                make_state(message.chat.id, "start")
+            else:
+                for lection_reserve in lection_reserves:
+                    if time_start <= lection_reserve.time_start and time_start <= lection_reserve.time_end and time_end <= lection_reserve.time_start and time_end <= lection_reserve.time_end:
+                        can_add_up += 1
+                    if time_start >= lection_reserve.time_start and time_start >= lection_reserve.time_end and time_end >= lection_reserve.time_start and time_end >= lection_reserve.time_end:
+                        can_add_down += 1
+                result = can_add_up + can_add_down
+                if can_add_up == len(lection_reserves) or can_add_down == len(lection_reserves) or result == len(
+                        lection_reserves):
+                    lection_reserve = LectionReserve(time_start=time_start, time_end=time_end, date=date.today(),
+                                                     name=user.name)
+                    session.add(lection_reserve)
                     session.commit()
                     await bot.send_message(message.chat.id, "Готово")
                     make_state(message.chat.id, "start")

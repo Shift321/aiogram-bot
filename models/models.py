@@ -47,6 +47,16 @@ class TvReserve(Base):
     date = Column(Date)
 
 
+class LectionReserve(Base):
+    __tablename__ = "lectionreserve"
+
+    id: int = Column(Integer, primary_key=True, index=True)
+    name: str = Column(String)
+    time_start: datetime = Column(Time)
+    time_end: datetime = Column(Time)
+    date = Column(Date)
+
+
 class Wishes(Base):
     __tablename__ = "wishes"
 

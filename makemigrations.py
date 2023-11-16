@@ -6,7 +6,7 @@ from database.db import engine
 db_engine = engine
 db_meta = MetaData(bind=db_engine)
 
-table = Table('tvreserve', db_meta,
+table = Table('lectionreserve', db_meta,
               Column('id', Integer, primary_key=True)
               )
 col2 = Column('name', String)

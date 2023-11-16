@@ -9,9 +9,9 @@ from handlers.handlers import register, admin, food, post_menu, time_to_pay_hand
     want_to_add_wish, list_of_wish, delete_user_handler, add_cleaning_handler, \
     change_text_cleaning_handler, get_feed_back_handler, show_who_eating_for_week_handler, birth_insert_handler, \
     change_room_handler, show_birth_handler, add_birthday_handler, show_user_food_handler, food_reminder_handler, \
-    reserve_tv_handler
+    reserve_tv_handler, lection_reserve_handler
 
-from models.models import User, Menu, Washes, Food, State, Cleaning, FeedBack, Dinner, Wishes, TvReserve
+from models.models import User, Menu, Washes, Food, State, Cleaning, FeedBack, Dinner, Wishes, TvReserve, LectionReserve
 from utils.messages import messages, command_list, admin_command_list, week_days, feed_back
 from utils.utils import logging_tg, is_register, check_week_day, make_state, first_course_help, breakfast_help, \
     second_course_help, no_breakfast, no_first_course, no_second_course
@@ -261,6 +261,23 @@ async def wash_clothes(message: Message):
             time_start = str(tv_reserve.time_start)[:5]
             time_end = str(tv_reserve.time_end)[:5]
             text += f"{tv_reserve.name} {time_start}-{time_end}" + "\n"
+        text += "Введите время желаемой резервации тв в формате 15:00-16:00 "
+        await bot.send_message(message.chat.id, text)
+    else:
+        await bot.send_message(message.chat.id, messages['not_registered'])
+
+
+@dispatcher.message_handler(commands=['lection_reserve'])
+async def wash_clothes(message: Message):
+    logging_tg(message.chat.id, message)
+    if is_register(message):
+        make_state(message.chat.id, "lection_reserve")
+        lection_reserves = session.query(LectionReserve).filter(TvReserve.date == date.today()).order_by('time_start')
+        text = ""
+        for lection_reserve in lection_reserves:
+            time_start = str(lection_reserve.time_start)[:5]
+            time_end = str(lection_reserve.time_end)[:5]
+            text += f"{lection_reserve.name} {time_start}-{time_end}" + "\n"
         text += "Введите время желаемой резервации тв в формате 15:00-16:00 "
         await bot.send_message(message.chat.id, text)
     else:
@@ -566,7 +583,8 @@ async def send_prefers(message: Message):
             pass
         else:
             message_for_send += f"{user.name} из {user.room_number}. Предпочтения :{user.food}\n\n"
-    await bot.send_message(message.chat.id,message_for_send)
+    await bot.send_message(message.chat.id, message_for_send)
+
 
 @dispatcher.poll_answer_handler()
 async def poll_answer(poll_answer: PollAnswer):
@@ -646,6 +664,8 @@ async def add_user(message: Message):
             await wash_clothes_handler(message, bot)
         if user_state[0].state == "reserve_tv":
             await reserve_tv_handler(message, bot)
+        if user_state[0].state == "lection_reserve":
+            await lection_reserve_handler(message, bot)
         if user_state[0].state == "want_to_add":
             await want_to_add_wish(message, bot)
         if user_state[0].state == "delete_user":
