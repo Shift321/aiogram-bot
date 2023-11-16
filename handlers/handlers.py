@@ -156,9 +156,9 @@ async def reserve_tv_handler(message, bot):
             can_add_down = 0
             tv_reserves = session.query(TvReserve).filter(TvReserve.date == date.today()).all()
             if len(tv_reserves) == 0:
-                wash = Washes(time_start=time_start, time_end=time_end, date=date.today(),
-                              name=user.name)
-                session.add(wash)
+                tv_reserve = TvReserve(time_start=time_start, time_end=time_end, date=date.today(),
+                                       name=user.name)
+                session.add(tv_reserve)
                 session.commit()
                 await bot.send_message(message.chat.id, "Готово")
 
@@ -171,9 +171,9 @@ async def reserve_tv_handler(message, bot):
                         can_add_down += 1
                 result = can_add_up + can_add_down
                 if can_add_up == len(tv_reserves) or can_add_down == len(tv_reserves) or result == len(tv_reserves):
-                    wash = Washes(time_start=time_start, time_end=time_end, date=date.today(),
-                                  name=user.name)
-                    session.add(wash)
+                    tvreserve = TvReserve(time_start=time_start, time_end=time_end, date=date.today(),
+                                          name=user.name)
+                    session.add(tvreserve)
                     session.commit()
                     await bot.send_message(message.chat.id, "Готово")
                     make_state(message.chat.id, "start")
