@@ -261,7 +261,7 @@ async def wash_clothes(message: Message):
             time_start = str(tv_reserve.time_start)[:5]
             time_end = str(tv_reserve.time_end)[:5]
             text += f"{tv_reserve.name} {time_start}-{time_end}" + "\n"
-        text += "Введите время желаемой резервации тв в формате 15:00-16:00 "
+        text += "Введите время желаемой брони тв в формате 15:00-16:00 "
         await bot.send_message(message.chat.id, text)
     else:
         await bot.send_message(message.chat.id, messages['not_registered'])
@@ -278,7 +278,7 @@ async def wash_clothes(message: Message):
             time_start = str(lection_reserve.time_start)[:5]
             time_end = str(lection_reserve.time_end)[:5]
             text += f"{lection_reserve.name} {time_start}-{time_end}" + "\n"
-        text += "Введите время желаемой резервации тв в формате 15:00-16:00 "
+        text += "Введите время желаемой брони лекционной в формате 15:00-16:00 "
         await bot.send_message(message.chat.id, text)
     else:
         await bot.send_message(message.chat.id, messages['not_registered'])
