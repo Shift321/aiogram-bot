@@ -8,9 +8,10 @@ from database.db import Base, engine, session
 from handlers.handlers import register, admin, food, post_menu, time_to_pay_handler, wash_clothes_handler, \
     want_to_add_wish, list_of_wish, delete_user_handler, add_cleaning_handler, \
     change_text_cleaning_handler, get_feed_back_handler, show_who_eating_for_week_handler, birth_insert_handler, \
-    change_room_handler, show_birth_handler, add_birthday_handler, show_user_food_handler, food_reminder_handler
+    change_room_handler, show_birth_handler, add_birthday_handler, show_user_food_handler, food_reminder_handler, \
+    reserve_tv_handler
 
-from models.models import User, Menu, Washes, Food, State, Cleaning, FeedBack, Dinner, Wishes
+from models.models import User, Menu, Washes, Food, State, Cleaning, FeedBack, Dinner, Wishes, TvReserve
 from utils.messages import messages, command_list, admin_command_list, week_days, feed_back
 from utils.utils import logging_tg, is_register, check_week_day, make_state, first_course_help, breakfast_help, \
     second_course_help, no_breakfast, no_first_course, no_second_course
@@ -244,6 +245,23 @@ async def wash_clothes(message: Message):
             time_end = str(wash.time_end)[:5]
             text += f"{wash.name} {time_start}-{time_end}" + "\n"
         text += "Введите время желаемой стирки в формате 15:00-16:00 "
+        await bot.send_message(message.chat.id, text)
+    else:
+        await bot.send_message(message.chat.id, messages['not_registered'])
+
+
+@dispatcher.message_handler(commands=['reserve_tv'])
+async def wash_clothes(message: Message):
+    logging_tg(message.chat.id, message)
+    if is_register(message):
+        make_state(message.chat.id, "reserve_tv")
+        tv_reserves = session.query(TvReserve).filter(TvReserve.date == date.today()).order_by('time_start')
+        text = ""
+        for tv_reserve in tv_reserves:
+            time_start = str(tv_reserve.time_start)[:5]
+            time_end = str(tv_reserve.time_end)[:5]
+            text += f"{tv_reserve.name} {time_start}-{time_end}" + "\n"
+        text += "Введите время желаемой резервации тв в формате 15:00-16:00 "
         await bot.send_message(message.chat.id, text)
     else:
         await bot.send_message(message.chat.id, messages['not_registered'])
@@ -626,6 +644,8 @@ async def add_user(message: Message):
             await time_to_pay_handler(message, bot)
         if user_state[0].state == "wash_cloth":
             await wash_clothes_handler(message, bot)
+        if user_state[0].state == "reserve_tv":
+            await reserve_tv_handler(message, bot)
         if user_state[0].state == "want_to_add":
             await want_to_add_wish(message, bot)
         if user_state[0].state == "delete_user":

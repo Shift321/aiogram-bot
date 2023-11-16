@@ -1,7 +1,7 @@
 from datetime import datetime, date, timedelta
 
 from database.db import session
-from models.models import User, Menu, Washes, Wishes, Payments, Cleaning, Food, FeedBack, Dinner
+from models.models import User, Menu, Washes, Wishes, Payments, Cleaning, Food, FeedBack, Dinner, TvReserve
 from utils.utils import make_state, check_week_day, what_to_eat_dinner
 
 
@@ -138,9 +138,52 @@ async def wash_clothes_handler(message, bot):
                     await bot.send_message(message.chat.id, "Данное время занято введите другое время")
 
 
+async def reserve_tv_handler(message, bot):
+    time = message.text.split("-")
+    format_ok = True
+    try:
+        time_start = datetime.strptime(time[0], '%H:%M').time()
+        time_end = datetime.strptime(time[1], '%H:%M').time()
+    except:
+        format_ok = False
+        await bot.send_message(message.chat.id, "Неправильный формат ввода")
+    if format_ok:
+        if time_start > time_end:
+            await bot.send_message(message.chat.id, "Вы ввели неправильное время попробуйте еще раз")
+        else:
+            user = session.query(User).filter(User.telegram_id == message.chat.id).one()
+            can_add_up = 0
+            can_add_down = 0
+            tv_reserves = session.query(TvReserve).filter(TvReserve.date == date.today()).all()
+            if len(tv_reserves) == 0:
+                wash = Washes(time_start=time_start, time_end=time_end, date=date.today(),
+                              name=user.name)
+                session.add(wash)
+                session.commit()
+                await bot.send_message(message.chat.id, "Готово")
+
+                make_state(message.chat.id, "start")
+            else:
+                for tv_reserve in tv_reserves:
+                    if time_start <= tv_reserve.time_start and time_start <= tv_reserve.time_end and time_end <= tv_reserve.time_start and time_end <= tv_reserve.time_end:
+                        can_add_up += 1
+                    if time_start >= tv_reserve.time_start and time_start >= tv_reserve.time_end and time_end >= tv_reserve.time_start and time_end >= tv_reserve.time_end:
+                        can_add_down += 1
+                result = can_add_up + can_add_down
+                if can_add_up == len(tv_reserves) or can_add_down == len(tv_reserves) or result == len(tv_reserves):
+                    wash = Washes(time_start=time_start, time_end=time_end, date=date.today(),
+                                  name=user.name)
+                    session.add(wash)
+                    session.commit()
+                    await bot.send_message(message.chat.id, "Готово")
+                    make_state(message.chat.id, "start")
+                else:
+                    await bot.send_message(message.chat.id, "Данное время занято введите другое время")
+
+
 async def want_to_add_wish(message, bot):
     user = session.query(User).filter(User.telegram_id == message.chat.id).one()
-    wish = Wishes(user_id=user.id, text=message.text,date_of_wish=date.today())
+    wish = Wishes(user_id=user.id, text=message.text, date_of_wish=date.today())
     session.add(wish)
     session.commit()
     await bot.send_message(message.chat.id, "Ваше пожелание записано!")

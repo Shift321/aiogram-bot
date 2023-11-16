@@ -37,6 +37,16 @@ class Washes(Base):
     date = Column(Date)
 
 
+class TvReserve(Base):
+    __tablename__ = "washes"
+
+    id: int = Column(Integer, primary_key=True, index=True)
+    name: str = Column(String)
+    time_start: datetime = Column(Time)
+    time_end: datetime = Column(Time)
+    date = Column(Date)
+
+
 class Wishes(Base):
     __tablename__ = "wishes"
 
