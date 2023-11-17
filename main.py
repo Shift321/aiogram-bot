@@ -12,7 +12,7 @@ from handlers.handlers import register, admin, food, post_menu, time_to_pay_hand
     reserve_tv_handler, lection_reserve_handler
 
 from models.models import User, Menu, Washes, Food, State, Cleaning, FeedBack, Dinner, Wishes, TvReserve, LectionReserve
-from utils.messages import messages, command_list, admin_command_list, week_days, feed_back
+from utils.messages import messages, command_list, admin_command_list, week_days, feed_back, payment_requisites
 from utils.utils import logging_tg, is_register, check_week_day, make_state, first_course_help, breakfast_help, \
     second_course_help, no_breakfast, no_first_course, no_second_course
 
@@ -128,7 +128,7 @@ async def pay(message: Message):
     if is_register(message):
         make_state(message.chat.id, "pay")
         await bot.send_message(message.chat.id,
-                               "Оплату за жильё, питание, разбитую посуду и мероприятия можно перевести по счёту GE40BG0000000537661778 Daria Marshalkina")
+                               f"Оплату за жильё, питание, разбитую посуду и мероприятия можно перевести по счёту {payment_requisites}")
     else:
         await bot.send_message(message.chat.id, messages['not_registered'])
 
@@ -243,7 +243,7 @@ async def wash_clothes(message: Message):
         for wash in washes:
             time_start = str(wash.time_start)[:5]
             time_end = str(wash.time_end)[:5]
-            text += f"{wash.name} {time_start}-{time_end} {wash.date}" + "\n"
+            text += f"{wash.name} {time_start}-{time_end} {wash.date}" + "\n\n"
         text += "Введите время желаемой стирки в формате 15:00-16:00-17.11.2023\n(если вы не укажите дату датой будет автоматически выбран сегодняшний день)"
         await bot.send_message(message.chat.id, text)
     else:
@@ -261,7 +261,7 @@ async def wash_clothes(message: Message):
         for tv_reserve in tv_reserves:
             time_start = str(tv_reserve.time_start)[:5]
             time_end = str(tv_reserve.time_end)[:5]
-            text += f"{tv_reserve.name} {time_start}-{time_end} {tv_reserve.date}" + "\n"
+            text += f"{tv_reserve.name} {time_start}-{time_end} {tv_reserve.date}" + "\n\n"
         text += "Введите время желаемой брони тв в формате 15:00-16:00-17.11.2023\n(если вы не укажите дату датой будет автоматически выбран сегодняшний день)"
         await bot.send_message(message.chat.id, text)
     else:
@@ -279,7 +279,7 @@ async def wash_clothes(message: Message):
         for lection_reserve in lection_reserves:
             time_start = str(lection_reserve.time_start)[:5]
             time_end = str(lection_reserve.time_end)[:5]
-            text += f"{lection_reserve.name} {time_start}-{time_end} {lection_reserve.date}" + "\n"
+            text += f"{lection_reserve.name} {time_start}-{time_end} {lection_reserve.date}" + "\n\n"
         text += "Введите время желаемой брони лекционной в формате 15:00-16:00-17.11.2023\n(если вы не укажите дату датой будет автоматически выбран сегодняшний день)"
         await bot.send_message(message.chat.id, text)
     else:
@@ -296,7 +296,7 @@ async def clean_lections_and_tv(message: Message):
     for i in all_tv:
         session.delete(i)
         session.commit()
-    await bot.send_message(message.chat.id, "готово")
+    await bot.send_message(message.chat.id, "Готово")
 
 
 @dispatcher.message_handler(commands=['admin'])
