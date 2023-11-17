@@ -255,12 +255,12 @@ async def wash_clothes(message: Message):
     logging_tg(message.chat.id, message)
     if is_register(message):
         make_state(message.chat.id, "reserve_tv")
-        tv_reserves = session.query(TvReserve).filter(TvReserve.date == date.today()).order_by('time_start')
+        tv_reserves = session.query(TvReserve).filter(TvReserve.date >= date.today()).order_by('time_start')
         text = ""
         for tv_reserve in tv_reserves:
             time_start = str(tv_reserve.time_start)[:5]
             time_end = str(tv_reserve.time_end)[:5]
-            text += f"{tv_reserve.name} {time_start}-{time_end}" + "\n"
+            text += f"{tv_reserve.name} {time_start}-{time_end} {tv_reserves.date} " + "\n"
         text += "Введите время желаемой брони тв в формате 15:00-16:00 "
         await bot.send_message(message.chat.id, text)
     else:
