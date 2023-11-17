@@ -79,7 +79,7 @@ def check_cleaning():
                         session.commit()
 
 
-def send_paymet_food():
+def send_payment_food():
     users_food = session.query(User).filter(User.recieve_payment_message == False).all()
     food = session.query(Food).all()
     for user_food in users_food:
@@ -185,7 +185,7 @@ while True:
             delete_cleaning()
             delete_food()
         if check_time(12, 36):
-            send_paymet_food()
+            send_payment_food()
     if check_time(11, 00):
         check_payments()
     if check_time(12, 00):
