@@ -187,16 +187,16 @@ async def reserve_tv_handler(message, bot):
 async def lection_reserve_handler(message, bot):
     time = message.text.split("-")
     format_ok = True
-    # try:
-    time_start = datetime.strptime(time[0], '%H:%M').time()
-    time_end = datetime.strptime(time[1], '%H:%M').time()
-    if len(time) < 3:
-        date_of_reserve = date.today()
-    else:
-        date_of_reserve = datetime.strptime(time[2], '%d.%m.%Y')
-    # except:
-    #     format_ok = False
-    #     await bot.send_message(message.chat.id, "Неправильный формат ввода")
+    try:
+        time_start = datetime.strptime(time[0], '%H:%M').time()
+        time_end = datetime.strptime(time[1], '%H:%M').time()
+        if len(time) < 3:
+            date_of_reserve = date.today()
+        else:
+            date_of_reserve = datetime.strptime(time[2], '%d.%m.%Y')
+    except:
+        format_ok = False
+        await bot.send_message(message.chat.id, "Неправильный формат ввода")
     if format_ok:
         if time_start > time_end:
             await bot.send_message(message.chat.id, "Вы ввели неправильное время попробуйте еще раз")
