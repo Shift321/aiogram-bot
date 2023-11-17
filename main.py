@@ -250,7 +250,7 @@ async def wash_clothes(message: Message):
         await bot.send_message(message.chat.id, messages['not_registered'])
 
 
-@dispatcher.message_handler(commands=['/reserve_tv'])
+@dispatcher.message_handler(commands=['test_reserve_tv'])
 async def wash_clothes(message: Message):
     logging_tg(message.chat.id, message)
     if is_register(message):
