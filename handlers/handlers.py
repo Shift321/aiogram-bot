@@ -190,10 +190,10 @@ async def lection_reserve_handler(message, bot):
     try:
         time_start = datetime.strptime(time[0], '%H:%M').time()
         time_end = datetime.strptime(time[1], '%H:%M').time()
-        try:
-            date_of_reserve = datetime.strptime(time[2], '%d.%m.%Y')
-        except:
+        if len(time) < 3:
             date_of_reserve = date.today()
+        else:
+            date_of_reserve = datetime.strptime(time[2], '%d.%m.%Y')
     except:
         format_ok = False
         await bot.send_message(message.chat.id, "Неправильный формат ввода")
