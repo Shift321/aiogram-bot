@@ -6,7 +6,7 @@ import requests
 
 from database.db import session
 from models.models import Payments, User, Cleaning, Food, Dinner
-from utils.messages import cleaning_time, feed_back
+from utils.messages import cleaning_time, payment_requisites
 from utils.utils import make_state, check_week_day
 
 url = f"https://api.telegram.org/bot5888170225:AAF49kmNi9IngDKghmYWUknvDhYZMYM3-Uc/sendMessage"
@@ -102,7 +102,7 @@ def send_paymet_food():
             pass
         else:
             send_message(user_id=user_food.telegram_id,
-                         text_to_send=f"Время платить за еду ! с тебя {summ_to_pay}\n")
+                         text_to_send=f"Время платить за еду ! с тебя {summ_to_pay}\n\n Реквизиты для оплаты: {payment_requisites}\n")
             user_food.recieve_payment_message = True
             session.flush()
             session.commit()

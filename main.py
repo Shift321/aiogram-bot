@@ -12,7 +12,7 @@ from handlers.handlers import register, admin, food, post_menu, time_to_pay_hand
     reserve_tv_handler, lection_reserve_handler
 
 from models.models import User, Menu, Washes, Food, State, Cleaning, FeedBack, Dinner, Wishes, TvReserve, LectionReserve
-from utils.messages import messages, command_list, admin_command_list, week_days, feed_back
+from utils.messages import messages, command_list, admin_command_list, week_days, feed_back, payment_requisites
 from utils.utils import logging_tg, is_register, check_week_day, make_state, first_course_help, breakfast_help, \
     second_course_help, no_breakfast, no_first_course, no_second_course
 
@@ -128,7 +128,7 @@ async def pay(message: Message):
     if is_register(message):
         make_state(message.chat.id, "pay")
         await bot.send_message(message.chat.id,
-                               "Оплату за жильё, питание, разбитую посуду и мероприятия можно перевести по счёту GE40BG0000000537661778 Daria Marshalkina")
+                               f"Оплату за жильё, питание, разбитую посуду и мероприятия можно перевести по счёту {payment_requisites}")
     else:
         await bot.send_message(message.chat.id, messages['not_registered'])
 
