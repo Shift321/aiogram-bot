@@ -243,7 +243,7 @@ async def wash_clothes(message: Message):
         for wash in washes:
             time_start = str(wash.time_start)[:5]
             time_end = str(wash.time_end)[:5]
-            text += f"{wash.name} {time_start}-{time_end} {wash.date}" + "\n"
+            text += f"{wash.name} {time_start}-{time_end} {wash.date}" + "\n\n"
         text += "Введите время желаемой стирки в формате 15:00-16:00-17.11.2023\n(если вы не укажите дату датой будет автоматически выбран сегодняшний день)"
         await bot.send_message(message.chat.id, text)
     else:
@@ -261,7 +261,7 @@ async def wash_clothes(message: Message):
         for tv_reserve in tv_reserves:
             time_start = str(tv_reserve.time_start)[:5]
             time_end = str(tv_reserve.time_end)[:5]
-            text += f"{tv_reserve.name} {time_start}-{time_end} {tv_reserve.date}" + "\n"
+            text += f"{tv_reserve.name} {time_start}-{time_end} {tv_reserve.date}" + "\n\n"
         text += "Введите время желаемой брони тв в формате 15:00-16:00-17.11.2023\n(если вы не укажите дату датой будет автоматически выбран сегодняшний день)"
         await bot.send_message(message.chat.id, text)
     else:
@@ -279,7 +279,7 @@ async def wash_clothes(message: Message):
         for lection_reserve in lection_reserves:
             time_start = str(lection_reserve.time_start)[:5]
             time_end = str(lection_reserve.time_end)[:5]
-            text += f"{lection_reserve.name} {time_start}-{time_end} {lection_reserve.date}" + "\n"
+            text += f"{lection_reserve.name} {time_start}-{time_end} {lection_reserve.date}" + "\n\n"
         text += "Введите время желаемой брони лекционной в формате 15:00-16:00-17.11.2023\n(если вы не укажите дату датой будет автоматически выбран сегодняшний день)"
         await bot.send_message(message.chat.id, text)
     else:
@@ -296,7 +296,7 @@ async def clean_lections_and_tv(message: Message):
     for i in all_tv:
         session.delete(i)
         session.commit()
-    await bot.send_message(message.chat.id, "готово")
+    await bot.send_message(message.chat.id, "Готово")
 
 
 @dispatcher.message_handler(commands=['admin'])
