@@ -255,7 +255,7 @@ async def wash_clothes(message: Message):
     logging_tg(message.chat.id, message)
     if is_register(message):
         make_state(message.chat.id, "reserve_tv")
-        tv_reserves = session.query(TvReserve).filter(TvReserve.date >= date.today()).order_by('time_start').order_by(TvReserve.date)
+        tv_reserves = session.query(TvReserve).filter(TvReserve.date >= date.today()).order_by(TvReserve.date, TvReserve.time_start)
         text = ""
         for tv_reserve in tv_reserves:
             time_start = str(tv_reserve.time_start)[:5]
