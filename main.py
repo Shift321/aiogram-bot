@@ -244,7 +244,7 @@ async def wash_clothes(message: Message):
             time_start = str(wash.time_start)[:5]
             time_end = str(wash.time_end)[:5]
             text += f"{wash.name} {time_start}-{time_end} {wash.date}" + "\n"
-        text += "Введите время желаемой стирки в формате 15:00-16:00-17.11.2023"
+        text += "Введите время желаемой стирки в формате 15:00-16:00-17.11.2023\n(если вы не укажите дату датой будет автоматически выбран сегодняшний день)"
         await bot.send_message(message.chat.id, text)
     else:
         await bot.send_message(message.chat.id, messages['not_registered'])
@@ -255,13 +255,14 @@ async def wash_clothes(message: Message):
     logging_tg(message.chat.id, message)
     if is_register(message):
         make_state(message.chat.id, "reserve_tv")
-        tv_reserves = session.query(TvReserve).filter(TvReserve.date >= date.today()).order_by(TvReserve.date, TvReserve.time_start)
+        tv_reserves = session.query(TvReserve).filter(TvReserve.date >= date.today()).order_by(TvReserve.date,
+                                                                                               TvReserve.time_start)
         text = ""
         for tv_reserve in tv_reserves:
             time_start = str(tv_reserve.time_start)[:5]
             time_end = str(tv_reserve.time_end)[:5]
             text += f"{tv_reserve.name} {time_start}-{time_end} {tv_reserve.date}" + "\n"
-        text += "Введите время желаемой брони тв в формате 15:00-16:00-17.11.2023"
+        text += "Введите время желаемой брони тв в формате 15:00-16:00-17.11.2023\n(если вы не укажите дату датой будет автоматически выбран сегодняшний день)"
         await bot.send_message(message.chat.id, text)
     else:
         await bot.send_message(message.chat.id, messages['not_registered'])
@@ -272,16 +273,28 @@ async def wash_clothes(message: Message):
     logging_tg(message.chat.id, message)
     if is_register(message):
         make_state(message.chat.id, "lection_reserve")
-        lection_reserves = session.query(LectionReserve).filter(TvReserve.date >= date.today()).order_by(LectionReserve.date,LectionReserve.time_start)
+        lection_reserves = session.query(LectionReserve).filter(TvReserve.date >= date.today()).order_by(
+            LectionReserve.date, LectionReserve.time_start)
         text = ""
         for lection_reserve in lection_reserves:
             time_start = str(lection_reserve.time_start)[:5]
             time_end = str(lection_reserve.time_end)[:5]
             text += f"{lection_reserve.name} {time_start}-{time_end} {lection_reserve.date}" + "\n"
-        text += "Введите время желаемой брони лекционной в формате 15:00-16:00-17.11.2023"
+        text += "Введите время желаемой брони лекционной в формате 15:00-16:00-17.11.2023\n(если вы не укажите дату датой будет автоматически выбран сегодняшний день)"
         await bot.send_message(message.chat.id, text)
     else:
         await bot.send_message(message.chat.id, messages['not_registered'])
+
+
+@dispatcher.message_handler(commands=['clean_lections'])
+async def clean_lections_and_tv(message: Message):
+    all_lections = session.query(LectionReserve).all()
+    session.delete(all_lections)
+    session.commit()
+    all_tv = session.query(TvReserve).all()
+    session.delete(all_tv)
+    session.commit()
+    await bot.send_message(message.chat.id, "готово")
 
 
 @dispatcher.message_handler(commands=['admin'])
