@@ -289,11 +289,13 @@ async def wash_clothes(message: Message):
 @dispatcher.message_handler(commands=['clean_lections'])
 async def clean_lections_and_tv(message: Message):
     all_lections = session.query(LectionReserve).all()
-    session.delete(all_lections)
-    session.commit()
+    for i in all_lections:
+        session.delete(i)
+        session.commit()
     all_tv = session.query(TvReserve).all()
-    session.delete(all_tv)
-    session.commit()
+    for i in all_tv:
+        session.delete(i)
+        session.commit()
     await bot.send_message(message.chat.id, "готово")
 
 
