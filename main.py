@@ -238,19 +238,19 @@ async def wash_clothes(message: Message):
     logging_tg(message.chat.id, message)
     if is_register(message):
         make_state(message.chat.id, "wash_cloth")
-        washes = session.query(Washes).filter(Washes.date == date.today()).order_by('time_start')
+        washes = session.query(Washes).filter(Washes.date >= date.today()).order_by('time_start')
         text = ""
         for wash in washes:
             time_start = str(wash.time_start)[:5]
             time_end = str(wash.time_end)[:5]
-            text += f"{wash.name} {time_start}-{time_end}" + "\n"
-        text += "Введите время желаемой стирки в формате 15:00-16:00 "
+            text += f"{wash.name} {time_start}-{time_end} {wash.date}" + "\n"
+        text += "Введите время желаемой стирки в формате 15:00-16:00-11.17.2023"
         await bot.send_message(message.chat.id, text)
     else:
         await bot.send_message(message.chat.id, messages['not_registered'])
 
 
-@dispatcher.message_handler(commands=['test_reserve_tv'])
+@dispatcher.message_handler(commands=['reserve_tv'])
 async def wash_clothes(message: Message):
     logging_tg(message.chat.id, message)
     if is_register(message):
@@ -260,25 +260,25 @@ async def wash_clothes(message: Message):
         for tv_reserve in tv_reserves:
             time_start = str(tv_reserve.time_start)[:5]
             time_end = str(tv_reserve.time_end)[:5]
-            text += f"{tv_reserve.name} {time_start}-{time_end} {tv_reserve.date} " + "\n"
-        text += "Введите время желаемой брони тв в формате 15:00-16:00 "
+            text += f"{tv_reserve.name} {time_start}-{time_end} {tv_reserve.date}" + "\n"
+        text += "Введите время желаемой брони тв в формате 15:00-16:00-11.17.2023"
         await bot.send_message(message.chat.id, text)
     else:
         await bot.send_message(message.chat.id, messages['not_registered'])
 
 
-@dispatcher.message_handler(commands=['/lection_reserve'])
+@dispatcher.message_handler(commands=['lection_reserve'])
 async def wash_clothes(message: Message):
     logging_tg(message.chat.id, message)
     if is_register(message):
         make_state(message.chat.id, "lection_reserve")
-        lection_reserves = session.query(LectionReserve).filter(TvReserve.date == date.today()).order_by('time_start')
+        lection_reserves = session.query(LectionReserve).filter(TvReserve.date >= date.today()).order_by('time_start')
         text = ""
         for lection_reserve in lection_reserves:
             time_start = str(lection_reserve.time_start)[:5]
             time_end = str(lection_reserve.time_end)[:5]
-            text += f"{lection_reserve.name} {time_start}-{time_end}" + "\n"
-        text += "Введите время желаемой брони лекционной в формате 15:00-16:00 "
+            text += f"{lection_reserve.name} {time_start}-{time_end} {lection_reserve.date}" + "\n"
+        text += "Введите время желаемой брони лекционной в формате 15:00-16:00-11.17.2023"
         await bot.send_message(message.chat.id, text)
     else:
         await bot.send_message(message.chat.id, messages['not_registered'])

@@ -102,6 +102,7 @@ async def wash_clothes_handler(message, bot):
     try:
         time_start = datetime.strptime(time[0], '%H:%M').time()
         time_end = datetime.strptime(time[1], '%H:%M').time()
+        date_of_reserve = datetime.strptime(time[2], '%d.%m.%Y')
     except:
         format_ok = False
         await bot.send_message(message.chat.id, "Неправильный формат ввода")
@@ -112,9 +113,9 @@ async def wash_clothes_handler(message, bot):
             user = session.query(User).filter(User.telegram_id == message.chat.id).one()
             can_add_up = 0
             can_add_down = 0
-            all_washes = session.query(Washes).filter(Washes.date == date.today()).all()
+            all_washes = session.query(Washes).filter(Washes.date == date_of_reserve).all()
             if len(all_washes) == 0:
-                wash = Washes(time_start=time_start, time_end=time_end, date=date.today(),
+                wash = Washes(time_start=time_start, time_end=time_end, date=date_of_reserve,
                               name=user.name)
                 session.add(wash)
                 session.commit()
@@ -129,7 +130,7 @@ async def wash_clothes_handler(message, bot):
                         can_add_down += 1
                 result = can_add_up + can_add_down
                 if can_add_up == len(all_washes) or can_add_down == len(all_washes) or result == len(all_washes):
-                    wash = Washes(time_start=time_start, time_end=time_end, date=date.today(),
+                    wash = Washes(time_start=time_start, time_end=time_end, date=date_of_reserve,
                                   name=user.name)
                     session.add(wash)
                     session.commit()
@@ -189,6 +190,7 @@ async def lection_reserve_handler(message, bot):
     try:
         time_start = datetime.strptime(time[0], '%H:%M').time()
         time_end = datetime.strptime(time[1], '%H:%M').time()
+        date_of_reserve = datetime.strptime(time[2], '%d.%m.%Y')
     except:
         format_ok = False
         await bot.send_message(message.chat.id, "Неправильный формат ввода")
@@ -199,9 +201,9 @@ async def lection_reserve_handler(message, bot):
             user = session.query(User).filter(User.telegram_id == message.chat.id).one()
             can_add_up = 0
             can_add_down = 0
-            lection_reserves = session.query(LectionReserve).filter(LectionReserve.date == date.today()).all()
+            lection_reserves = session.query(LectionReserve).filter(LectionReserve.date == date_of_reserve).all()
             if len(lection_reserves) == 0:
-                lection_reserve = LectionReserve(time_start=time_start, time_end=time_end, date=date.today(),
+                lection_reserve = LectionReserve(time_start=time_start, time_end=time_end, date=date_of_reserve,
                                                  name=user.name)
                 session.add(lection_reserve)
                 session.commit()
@@ -217,7 +219,7 @@ async def lection_reserve_handler(message, bot):
                 result = can_add_up + can_add_down
                 if can_add_up == len(lection_reserves) or can_add_down == len(lection_reserves) or result == len(
                         lection_reserves):
-                    lection_reserve = LectionReserve(time_start=time_start, time_end=time_end, date=date.today(),
+                    lection_reserve = LectionReserve(time_start=time_start, time_end=time_end, date=date_of_reserve,
                                                      name=user.name)
                     session.add(lection_reserve)
                     session.commit()
