@@ -614,6 +614,7 @@ async def send_prefers(message: Message):
 
 @dispatcher.poll_answer_handler()
 async def poll_answer_handler(poll_answer: PollAnswer):
+    print("Received poll answer:", poll_answer)
     users = session.query(User).all()
     print("here")
     for user in users:
