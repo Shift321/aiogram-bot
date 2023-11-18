@@ -595,8 +595,8 @@ async def show_lera_food(message:Message):
     text_message = ""
     for i in food_of_lera:
         text_message += i.name_of_week_day
-        text_message += i.breakfast
-        text_message += i.dinner
+        text_message += str(i.breakfast)
+        text_message += str(i.dinner)
         text_message += "\n\n"
     await bot.send_message(message.chat.id,text_message)
 
