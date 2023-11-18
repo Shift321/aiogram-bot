@@ -16,7 +16,8 @@ from utils.messages import messages, command_list, admin_command_list, week_days
 from utils.utils import logging_tg, is_register, check_week_day, make_state, first_course_help, breakfast_help, \
     second_course_help, no_breakfast, no_first_course, no_second_course
 
-bot = Bot("5888170225:AAF49kmNi9IngDKghmYWUknvDhYZMYM3-Uc")
+# bot = Bot("5888170225:AAF49kmNi9IngDKghmYWUknvDhYZMYM3-Uc")
+bot = Bot("6565624535:AAHcgTNJT9IwEIW6eeaf67PvD_JwpVEVRao")
 dispatcher = Dispatcher(bot)
 Base.metadata.create_all(engine)
 
@@ -558,7 +559,6 @@ async def show_birth(message: Message):
     else:
         await bot.send_message(message.chat.id, messages['not_registered'])
 
-
 @dispatcher.message_handler(commands=['add_birthday'])
 async def add_birthday(message: Message):
     if is_register(message):
@@ -580,62 +580,49 @@ async def send_prefers(message: Message):
     await bot.send_message(message.chat.id, message_for_send)
 
 
-@dispatcher.message_handler(commands=['testing'])
-async def testing(message: Message):
-    poll = await message.answer_poll(question='Завтраки',
-                                     allows_multiple_answers=True,
-                                     options=['a', 'b'],
-                                     is_anonymous=False)
-
-
 @dispatcher.poll_answer_handler()
-async def testing_answers(poll_answer: PollAnswer):
-    print("hello")
+async def poll_answer_handler(poll_answer: PollAnswer):
+    users = session.query(User).all()
+    for user in users:
+        if user.info_string is not None:
+            info_string = json.loads(user.info_string)
+            if info_string['tg_user_id'] == poll_answer.user.id:
+                information = json.loads(user.info_string)
+                user_id = user.id
+    user = session.query(User).filter(User.id == user_id).one()
 
+    if information['breakfast'] == int(poll_answer.poll_id):
+        if poll_answer.option_ids == [7]:
+            no_breakfast(user)
+        else:
+            breakfast_help(poll_answer, user)
 
-# @dispatcher.poll_answer_handler()
-# async def poll_answer_handler(poll_answer: PollAnswer):
-#     print("here")
-#     users = session.query(User).all()
-#     for user in users:
-#         if user.info_string is not None:
-#             info_string = json.loads(user.info_string)
-#             if info_string['tg_user_id'] == poll_answer.user.id:
-#                 information = json.loads(user.info_string)
-#                 user_id = user.id
-#     user = session.query(User).filter(User.id == user_id).one()
-#
-#     if information['breakfast'] == int(poll_answer.poll_id):
-#         if poll_answer.option_ids == [7]:
-#             no_breakfast(user)
-#         else:
-#             breakfast_help(poll_answer, user)
-#
-#     if information['first_course'] == int(poll_answer.poll_id):
-#         if poll_answer.option_ids == [7]:
-#             no_first_course(user)
-#         else:
-#             first_course_help(poll_answer, user)
-#
-#     if information['second_course'] == int(poll_answer.poll_id):
-#         if poll_answer.option_ids == [7]:
-#             no_second_course(user)
-#         else:
-#             second_course_help(poll_answer, user)
-#     foods = session.query(Food).filter(Food.user_id == user.id).all()
-#     for i in foods:
-#         courses = session.query(Dinner).filter(Dinner.food_id == i.id).all()
-#         if len(courses) == 0:
-#             pass
-#         else:
-#             if courses[0].first_course == False and courses[0].second_course == False:
-#                 i.dinner = False
-#                 session.flush()
-#                 session.commit()
-#             else:
-#                 i.dinner = True
-#                 session.flush()
-#                 session.commit()
+    if information['first_course'] == int(poll_answer.poll_id):
+        if poll_answer.option_ids == [7]:
+            no_first_course(user)
+        else:
+            first_course_help(poll_answer, user)
+
+    if information['second_course'] == int(poll_answer.poll_id):
+        if poll_answer.option_ids == [7]:
+            no_second_course(user)
+        else:
+            second_course_help(poll_answer, user)
+    foods = session.query(Food).filter(Food.user_id == user.id).all()
+    for i in foods:
+        courses = session.query(Dinner).filter(Dinner.food_id == i.id).all()
+        if len(courses) == 0:
+            pass
+        else:
+            if courses[0].first_course == False and courses[0].second_course == False:
+                i.dinner = False
+                session.flush()
+                session.commit()
+            else:
+                i.dinner = True
+                session.flush()
+                session.commit()
+
 
 
 @dispatcher.message_handler()
