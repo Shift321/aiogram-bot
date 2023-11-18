@@ -97,15 +97,22 @@ async def send_to_all(message: Message):
         await bot.send_message(message.chat.id, messages['not_registered'])
 
 
+@dispatcher.message_handler(commands=['testing'])
+async def testing_shit(message: Message):
+    poll = await message.answer_poll(question='Завтраки',
+                                     allows_multiple_answers=True,
+                                     options=week_days,
+                                     is_anonymous=False)
+
+
 @dispatcher.message_handler(commands=['meal'])
 async def when_to_eat(message: Message):
     logging_tg(message.chat.id, message)
     if is_register(message):
-        poll = await bot.send_poll(question='Завтраки',
+        poll = await message.answer_poll(question='Завтраки',
                                          allows_multiple_answers=True,
                                          options=week_days,
-                                         is_anonymous=False,
-                                        chat_id=message.chat.id)
+                                         is_anonymous=False)
         poll2 = await message.answer_poll(question='Обеды(первое)',
                                           allows_multiple_answers=True,
                                           options=week_days,
@@ -682,6 +689,7 @@ async def add_user(message: Message):
             await show_user_food_handler(message, bot)
         if user_state[0].state == "food_reminder":
             await food_reminder_handler(message, bot)
+
 
 dispatcher.register_poll_answer_handler(poll_answer_handler)
 executor.start_polling(dispatcher, skip_updates=True, timeout=10)
