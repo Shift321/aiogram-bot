@@ -594,6 +594,7 @@ async def send_prefers(message: Message):
 
 @dispatcher.poll_answer_handler()
 async def poll_answer_handler(poll_answer: PollAnswer):
+    print("HERE")
     users = session.query(User).all()
     for user in users:
         if user.info_string is not None:
