@@ -101,6 +101,7 @@ async def send_to_all(message: Message):
 async def when_to_eat(message: Message):
     logging_tg(message.chat.id, message)
     if is_register(message):
+        print("here")
         poll = await message.answer_poll(question='Завтраки',
                                          allows_multiple_answers=True,
                                          options=week_days,
