@@ -620,6 +620,7 @@ async def poll_answer(poll_answer: PollAnswer):
             info_string = json.loads(user.info_string)
             if info_string['tg_user_id'] == poll_answer.user.id:
                 information = json.loads(user.info_string)
+                print(information)
                 user_id = user.id
     user = session.query(User).filter(User.id == user_id).one()
 
