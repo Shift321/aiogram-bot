@@ -595,7 +595,6 @@ async def send_prefers(message: Message):
 @dispatcher.poll_answer_handler()
 async def poll_answer_handler(poll_answer: PollAnswer):
     users = session.query(User).all()
-    print("here")
     for user in users:
         if user.info_string is not None:
             info_string = json.loads(user.info_string)
@@ -684,4 +683,4 @@ async def add_user(message: Message):
             await food_reminder_handler(message, bot)
 
 
-executor.start_polling(dispatcher)
+executor.start_polling(dispatcher, skip_updates=True, timeout=10)
