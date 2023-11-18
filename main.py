@@ -594,14 +594,12 @@ async def send_prefers(message: Message):
 
 @dispatcher.poll_answer_handler()
 async def poll_answer_handler(poll_answer: PollAnswer):
-    print("HERE")
     users = session.query(User).all()
     for user in users:
         if user.info_string is not None:
             info_string = json.loads(user.info_string)
             if info_string['tg_user_id'] == poll_answer.user.id:
                 information = json.loads(user.info_string)
-                print(information)
                 user_id = user.id
     user = session.query(User).filter(User.id == user_id).one()
 
@@ -638,50 +636,50 @@ async def poll_answer_handler(poll_answer: PollAnswer):
                 session.commit()
 
 
-@dispatcher.message_handler()
-async def add_user(message: Message):
-    user_state = session.query(State).filter(State.chat_id == message.chat.id).all()
-    if user_state == 0:
-        state = State(chat_id=message.chat.id, state="start")
-        session.add(state)
-        session.commit()
-    else:
-        if user_state[0].state == "add_birthday":
-            await add_birthday_handler(message, bot)
-        if user_state[0].state == "change_room":
-            await change_room_handler(message, bot)
-        if user_state[0].state == "send_to_all":
-            await birth_insert_handler(message, bot)
-        if user_state[0].state == "get_feedback":
-            await get_feed_back_handler(message, bot)
-        if user_state[0].state == "add_cleaning":
-            await add_cleaning_handler(message, bot)
-        if user_state[0].state == "added_cleaning":
-            await change_text_cleaning_handler(message, bot)
-        if user_state[0].state == "register":
-            await register(message, bot)
-        if user_state[0].state == "admin":
-            await admin(message, bot)
-        if user_state[0].state == "food":
-            await food(message, bot)
-        if user_state[0].state == "post_menu":
-            await post_menu(message, bot)
-        if user_state[0].state == "time_to_pay":
-            await time_to_pay_handler(message, bot)
-        if user_state[0].state == "wash_cloth":
-            await wash_clothes_handler(message, bot)
-        if user_state[0].state == "reserve_tv":
-            await reserve_tv_handler(message, bot)
-        if user_state[0].state == "lection_reserve":
-            await lection_reserve_handler(message, bot)
-        if user_state[0].state == "want_to_add":
-            await want_to_add_wish(message, bot)
-        if user_state[0].state == "delete_user":
-            await delete_user_handler(message, bot)
-        if user_state[0].state == "show_user_food":
-            await show_user_food_handler(message, bot)
-        if user_state[0].state == "food_reminder":
-            await food_reminder_handler(message, bot)
+# @dispatcher.message_handler()
+# async def add_user(message: Message):
+#     user_state = session.query(State).filter(State.chat_id == message.chat.id).all()
+#     if user_state == 0:
+#         state = State(chat_id=message.chat.id, state="start")
+#         session.add(state)
+#         session.commit()
+#     else:
+#         if user_state[0].state == "add_birthday":
+#             await add_birthday_handler(message, bot)
+#         if user_state[0].state == "change_room":
+#             await change_room_handler(message, bot)
+#         if user_state[0].state == "send_to_all":
+#             await birth_insert_handler(message, bot)
+#         if user_state[0].state == "get_feedback":
+#             await get_feed_back_handler(message, bot)
+#         if user_state[0].state == "add_cleaning":
+#             await add_cleaning_handler(message, bot)
+#         if user_state[0].state == "added_cleaning":
+#             await change_text_cleaning_handler(message, bot)
+#         if user_state[0].state == "register":
+#             await register(message, bot)
+#         if user_state[0].state == "admin":
+#             await admin(message, bot)
+#         if user_state[0].state == "food":
+#             await food(message, bot)
+#         if user_state[0].state == "post_menu":
+#             await post_menu(message, bot)
+#         if user_state[0].state == "time_to_pay":
+#             await time_to_pay_handler(message, bot)
+#         if user_state[0].state == "wash_cloth":
+#             await wash_clothes_handler(message, bot)
+#         if user_state[0].state == "reserve_tv":
+#             await reserve_tv_handler(message, bot)
+#         if user_state[0].state == "lection_reserve":
+#             await lection_reserve_handler(message, bot)
+#         if user_state[0].state == "want_to_add":
+#             await want_to_add_wish(message, bot)
+#         if user_state[0].state == "delete_user":
+#             await delete_user_handler(message, bot)
+#         if user_state[0].state == "show_user_food":
+#             await show_user_food_handler(message, bot)
+#         if user_state[0].state == "food_reminder":
+#             await food_reminder_handler(message, bot)
 
 
 executor.start_polling(dispatcher, skip_updates=True, timeout=10)
