@@ -592,7 +592,17 @@ async def send_prefers(message: Message):
     await bot.send_message(message.chat.id, message_for_send)
 
 
+@dispatcher.message_handler(commands=['testing'])
+async def testing(message: Message):
+    poll = await message.answer_poll(question='Завтраки',
+                                     allows_multiple_answers=True,
+                                     options=['a', 'b'],
+                                     is_anonymous=False)
 
+
+@dispatcher.poll_answer_handler()
+async def testing_answers(poll_answer: PollAnswer):
+    print("hello")
 
 
 # @dispatcher.poll_answer_handler()
@@ -684,16 +694,6 @@ async def add_user(message: Message):
             await show_user_food_handler(message, bot)
         if user_state[0].state == "food_reminder":
             await food_reminder_handler(message, bot)
-@dispatcher.message_handler(commands=['testing'])
-async def testing(message: Message):
-    poll = await message.answer_poll(question='Завтраки',
-                                     allows_multiple_answers=True,
-                                     options=['a', 'b'],
-                                     is_anonymous=False)
 
-
-@dispatcher.poll_answer_handler()
-async def testing_answers(poll_answer: PollAnswer):
-    print("hello")
 
 executor.start_polling(dispatcher)
