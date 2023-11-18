@@ -588,8 +588,9 @@ async def send_payment_info(message: Message):
         make_state(user1[0].telegram_id, "get_feedback")
     await bot.send_message(message.chat.id, "ГОТОВО")
 
+
 @dispatcher.message_handler(commands=['show_lera_food'])
-async def show_lera_food(message:Message):
+async def show_lera_food(message: Message):
     lera = session.query(User).filter(User.name == "Валерия").one()
     food_of_lera = session.query(Food).filter(Food.user_id == lera.id).all()
     text_message = ""
@@ -598,7 +599,8 @@ async def show_lera_food(message:Message):
         text_message += str(i.breakfast)
         text_message += str(i.dinner)
         text_message += "\n\n"
-    await bot.send_message(message.chat.id,text_message)
+    await bot.send_message(message.chat.id, text_message)
+
 
 @dispatcher.message_handler(commands=['watch_prefers'])
 async def send_prefers(message: Message):
@@ -614,7 +616,7 @@ async def send_prefers(message: Message):
 
 @dispatcher.poll_answer_handler()
 async def poll_answer_handler(poll_answer: PollAnswer):
-    print("Received poll answer:", poll_answer)
+    print("hello JBQBHWkbdnKQwl")
     users = session.query(User).all()
     print("here")
     for user in users:
