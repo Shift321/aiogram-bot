@@ -694,5 +694,5 @@ async def add_user(message: Message):
             await food_reminder_handler(message, bot)
 
 
-dispatcher.register_poll_answer_handler(poll_answer_handler)
+
 executor.start_polling(dispatcher, skip_updates=True, timeout=10)
