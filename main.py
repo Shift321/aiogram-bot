@@ -104,7 +104,8 @@ async def when_to_eat(message: Message):
         poll = await bot.send_poll(question='Завтраки',
                                          allows_multiple_answers=True,
                                          options=week_days,
-                                         is_anonymous=False)
+                                         is_anonymous=False,
+                                        chat_id=message.chat.id)
         poll2 = await message.answer_poll(question='Обеды(первое)',
                                           allows_multiple_answers=True,
                                           options=week_days,
