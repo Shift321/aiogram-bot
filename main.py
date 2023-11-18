@@ -599,50 +599,53 @@ async def send_prefers(message: Message):
             message_for_send += f"{user.name} из {user.room_number}. Предпочтения :{user.food}\n\n"
     await bot.send_message(message.chat.id, message_for_send)
 
-
 @dispatcher.poll_answer_handler()
-async def poll_answer_handler(poll_answer: PollAnswer):
-    print("here")
-    users = session.query(User).all()
-    for user in users:
-        if user.info_string is not None:
-            info_string = json.loads(user.info_string)
-            if info_string['tg_user_id'] == poll_answer.user.id:
-                information = json.loads(user.info_string)
-                user_id = user.id
-    user = session.query(User).filter(User.id == user_id).one()
+async def testing_answers(poll_answer: PollAnswer):
+    print("hello")
 
-    if information['breakfast'] == int(poll_answer.poll_id):
-        if poll_answer.option_ids == [7]:
-            no_breakfast(user)
-        else:
-            breakfast_help(poll_answer, user)
-
-    if information['first_course'] == int(poll_answer.poll_id):
-        if poll_answer.option_ids == [7]:
-            no_first_course(user)
-        else:
-            first_course_help(poll_answer, user)
-
-    if information['second_course'] == int(poll_answer.poll_id):
-        if poll_answer.option_ids == [7]:
-            no_second_course(user)
-        else:
-            second_course_help(poll_answer, user)
-    foods = session.query(Food).filter(Food.user_id == user.id).all()
-    for i in foods:
-        courses = session.query(Dinner).filter(Dinner.food_id == i.id).all()
-        if len(courses) == 0:
-            pass
-        else:
-            if courses[0].first_course == False and courses[0].second_course == False:
-                i.dinner = False
-                session.flush()
-                session.commit()
-            else:
-                i.dinner = True
-                session.flush()
-                session.commit()
+# @dispatcher.poll_answer_handler()
+# async def poll_answer_handler(poll_answer: PollAnswer):
+#     print("here")
+#     users = session.query(User).all()
+#     for user in users:
+#         if user.info_string is not None:
+#             info_string = json.loads(user.info_string)
+#             if info_string['tg_user_id'] == poll_answer.user.id:
+#                 information = json.loads(user.info_string)
+#                 user_id = user.id
+#     user = session.query(User).filter(User.id == user_id).one()
+#
+#     if information['breakfast'] == int(poll_answer.poll_id):
+#         if poll_answer.option_ids == [7]:
+#             no_breakfast(user)
+#         else:
+#             breakfast_help(poll_answer, user)
+#
+#     if information['first_course'] == int(poll_answer.poll_id):
+#         if poll_answer.option_ids == [7]:
+#             no_first_course(user)
+#         else:
+#             first_course_help(poll_answer, user)
+#
+#     if information['second_course'] == int(poll_answer.poll_id):
+#         if poll_answer.option_ids == [7]:
+#             no_second_course(user)
+#         else:
+#             second_course_help(poll_answer, user)
+#     foods = session.query(Food).filter(Food.user_id == user.id).all()
+#     for i in foods:
+#         courses = session.query(Dinner).filter(Dinner.food_id == i.id).all()
+#         if len(courses) == 0:
+#             pass
+#         else:
+#             if courses[0].first_course == False and courses[0].second_course == False:
+#                 i.dinner = False
+#                 session.flush()
+#                 session.commit()
+#             else:
+#                 i.dinner = True
+#                 session.flush()
+#                 session.commit()
 
 
 @dispatcher.message_handler()
