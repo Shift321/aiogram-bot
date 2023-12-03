@@ -9,7 +9,7 @@ from models.models import Payments, User, Cleaning, Food, Dinner
 from utils.messages import cleaning_time, payment_requisites
 from utils.utils import make_state, check_week_day
 
-url = f"https://api.telegram.org/bot5888170225:AAF49kmNi9IngDKghmYWUknvDhYZMYM3-Uc/sendMessage"
+url = f"https://api.telegram.org/bot6565624535:AAHcgTNJT9IwEIW6eeaf67PvD_JwpVEVRao/sendMessage"
 
 
 def check_payments():
