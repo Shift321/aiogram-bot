@@ -8,8 +8,7 @@ from database.db import Base, engine, session
 from handlers.handlers import register, admin, food, post_menu, time_to_pay_handler, wash_clothes_handler, \
     want_to_add_wish, list_of_wish, delete_user_handler, add_cleaning_handler, \
     change_text_cleaning_handler, get_feed_back_handler, show_who_eating_for_week_handler, birth_insert_handler, \
-    change_room_handler, show_birth_handler, add_birthday_handler, show_user_food_handler, food_reminder_handler, \
-    reserve_tv_handler, lection_reserve_handler
+    change_room_handler, show_birth_handler, add_birthday_handler, show_user_food_handler, food_reminder_handler
 
 from models.models import User, Menu, Washes, Food, State, Cleaning, FeedBack, Dinner, Wishes, TvReserve, LectionReserve
 from utils.messages import messages, command_list, admin_command_list, week_days, feed_back, payment_requisites
@@ -619,10 +618,6 @@ async def add_user(message: Message):
             await time_to_pay_handler(message, bot)
         if user_state[0].state == "wash_cloth":
             await wash_clothes_handler(message, bot)
-        if user_state[0].state == "reserve_tv":
-            await reserve_tv_handler(message, bot)
-        if user_state[0].state == "lection_reserve":
-            await lection_reserve_handler(message, bot)
         if user_state[0].state == "want_to_add":
             await want_to_add_wish(message, bot)
         if user_state[0].state == "delete_user":

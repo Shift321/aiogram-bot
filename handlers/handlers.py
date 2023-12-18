@@ -143,53 +143,6 @@ async def wash_clothes_handler(message, bot):
                     await bot.send_message(message.chat.id, "Данное время занято введите другое время")
 
 
-async def reserve_tv_handler(message, bot):
-    time = message.text.split("-")
-    format_ok = True
-    try:
-        time_start = datetime.strptime(time[0], '%H:%M').time()
-        time_end = datetime.strptime(time[1], '%H:%M').time()
-        if len(time) < 3:
-            date_of_reserve = date.today()
-        else:
-            date_of_reserve = datetime.strptime(time[2], '%d.%m.%Y')
-    except:
-        format_ok = False
-        await bot.send_message(message.chat.id, "Неправильный формат ввода")
-    if format_ok:
-        if time_start > time_end:
-            await bot.send_message(message.chat.id, "Вы ввели неправильное время попробуйте еще раз")
-        else:
-            user = session.query(User).filter(User.telegram_id == message.chat.id).one()
-            can_add_up = 0
-            can_add_down = 0
-            tv_reserves = session.query(TvReserve).filter(TvReserve.date == date_of_reserve).all()
-            if len(tv_reserves) == 0:
-                tv_reserve = TvReserve(time_start=time_start, time_end=time_end, date=date_of_reserve,
-                                       name=user.name)
-                session.add(tv_reserve)
-                session.commit()
-                await bot.send_message(message.chat.id, "Готово")
-
-                make_state(message.chat.id, "start")
-            else:
-                for tv_reserve in tv_reserves:
-                    if time_start <= tv_reserve.time_start and time_start <= tv_reserve.time_end and time_end <= tv_reserve.time_start and time_end <= tv_reserve.time_end:
-                        can_add_up += 1
-                    if time_start >= tv_reserve.time_start and time_start >= tv_reserve.time_end and time_end >= tv_reserve.time_start and time_end >= tv_reserve.time_end:
-                        can_add_down += 1
-                result = can_add_up + can_add_down
-                if can_add_up == len(tv_reserves) or can_add_down == len(tv_reserves) or result == len(tv_reserves):
-                    tvreserve = TvReserve(time_start=time_start, time_end=time_end, date=date_of_reserve,
-                                          name=user.name)
-                    session.add(tvreserve)
-                    session.commit()
-                    await bot.send_message(message.chat.id, "Готово")
-                    make_state(message.chat.id, "start")
-                else:
-                    await bot.send_message(message.chat.id, "Данное время занято введите другое время")
-
-
 async def lection_reserve_handler(message, bot):
     time = message.text.split("-")
     format_ok = True
