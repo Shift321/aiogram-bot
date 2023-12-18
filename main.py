@@ -250,44 +250,6 @@ async def wash_clothes(message: Message):
     else:
         await bot.send_message(message.chat.id, messages['not_registered'])
 
-
-# @dispatcher.message_handler(commands=['reserve_tv'])
-# async def reserve_tv_handler(message: Message):
-#     logging_tg(message.chat.id, message)
-#     if is_register(message):
-#         make_state(message.chat.id, "reserve_tv")
-#         tv_reserves = session.query(TvReserve).filter(TvReserve.date >= date.today()).order_by(TvReserve.date,
-#                                                                                                TvReserve.time_start)
-#         text = ""
-#         for tv_reserve in tv_reserves:
-#             time_start = str(tv_reserve.time_start)[:5]
-#             time_end = str(tv_reserve.time_end)[:5]
-#             text += f"{tv_reserve.name} {time_start}-{time_end} {tv_reserve.date}" + "\n\n"
-#         text += "Введите время желаемой брони тв в формате 15:00-16:00-17.11.2023\n(если вы не укажите дату датой будет автоматически выбран сегодняшний день)"
-#         await bot.send_message(message.chat.id, text)
-#     else:
-#         await bot.send_message(message.chat.id, messages['not_registered'])
-#
-#
-# @dispatcher.message_handler(commands=['lection_reserve'])
-# async def lection_reserve_handler(message: Message):
-#     logging_tg(message.chat.id, message)
-#     if is_register(message):
-#         make_state(message.chat.id, "lection_reserve")
-#         lection_reserves = session.query(LectionReserve).filter(TvReserve.date >= date.today()).order_by(
-#             LectionReserve.date, LectionReserve.time_start)
-#         text = ""
-#         for lection_reserve in lection_reserves:
-#             time_start = str(lection_reserve.time_start)[:5]
-#             time_end = str(lection_reserve.time_end)[:5]
-#             text += f"{lection_reserve.name} {time_start}-{time_end} {lection_reserve.date}" + "\n\n"
-#         text += "Введите время желаемой брони лекционной в формате 15:00-16:00-17.11.2023\n(если вы не укажите дату датой будет автоматически выбран сегодняшний день)"
-#         await bot.send_message(message.chat.id, text)
-#     else:
-#         await bot.send_message(message.chat.id, messages['not_registered'])
-
-
-
 @dispatcher.message_handler(commands=['admin'])
 async def become_admin(message: Message):
     logging_tg(message.chat.id, message)
