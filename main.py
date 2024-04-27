@@ -46,6 +46,15 @@ async def change_room(message: Message):
         await bot.send_message(message.chat.id, messages['not_registered'])
 
 
+@dispatcher.message_handler(commands=['delete_washes'])
+async def delete_washes(message: Message):
+    washes = session.query(Washes).all()
+    for i in washes:
+        session.delete(i)
+        session.commit()
+    await bot.send_message(message.chat.id, "готово")
+
+
 @dispatcher.message_handler(commands=['who_need_to_pay'])
 async def who_need_to_pay(message: Message):
     if is_register(message):
@@ -248,6 +257,7 @@ async def wash_clothes(message: Message):
         await bot.send_message(message.chat.id, text)
     else:
         await bot.send_message(message.chat.id, messages['not_registered'])
+
 
 @dispatcher.message_handler(commands=['admin'])
 async def become_admin(message: Message):
@@ -520,6 +530,7 @@ async def show_birth(message: Message):
     else:
         await bot.send_message(message.chat.id, messages['not_registered'])
 
+
 @dispatcher.message_handler(commands=['add_birthday'])
 async def add_birthday(message: Message):
     if is_register(message):
@@ -583,7 +594,6 @@ async def poll_answer_handler(poll_answer: PollAnswer):
                 i.dinner = True
                 session.flush()
                 session.commit()
-
 
 
 @dispatcher.message_handler()
