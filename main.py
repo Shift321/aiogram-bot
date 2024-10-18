@@ -49,8 +49,14 @@ async def change_room(message: Message):
 @dispatcher.message_handler(commands=['delete_washes'])
 async def delete_washes(message: Message):
     washes = session.query(Washes).all()
-    for i in washes:
-        session.delete(i)
+    records_to_delete = [
+        date(2024, 11, 16),
+        date(2024, 12, 5),
+        date(2025, 7, 18),
+        date(2025, 9, 13),
+    ]
+    for i in records_to_delete:
+        session.query(Washes).filter(date == i).delete()
         session.commit()
     await bot.send_message(message.chat.id, "готово")
 
