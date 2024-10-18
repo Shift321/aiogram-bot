@@ -56,7 +56,7 @@ async def delete_washes(message: Message):
         date(2025, 9, 13),
     ]
     for i in records_to_delete:
-        session.query(Washes).filter(date == i).delete()
+        session.query(Washes).filter(Washes.date == i).delete()
         session.commit()
     await bot.send_message(message.chat.id, "готово")
 
