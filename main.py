@@ -582,7 +582,8 @@ async def poll_answer_handler(poll_answer: PollAnswer):
                 information = json.loads(user.info_string)
                 user_id = user.id
     user = session.query(User).filter(User.id == user_id).one()
-
+    print(information)
+    print(int(poll_answer.poll_id))
     if information['breakfast'] == int(poll_answer.poll_id):
         if poll_answer.option_ids == [7]:
             no_breakfast(user)
@@ -593,12 +594,14 @@ async def poll_answer_handler(poll_answer: PollAnswer):
         if poll_answer.option_ids == [7]:
             no_first_course(user)
         else:
+            print("I AM HERE")
             first_course_help(poll_answer, user)
 
     if information['second_course'] == int(poll_answer.poll_id):
         if poll_answer.option_ids == [7]:
             no_second_course(user)
         else:
+            print("I AM HERE")
             second_course_help(poll_answer, user)
     foods = session.query(Food).filter(Food.user_id == user.id).all()
     for i in foods:
