@@ -457,8 +457,8 @@ async def bug_fix(message: Message):
         dinner = session.query(Dinner).filter(Dinner.food_id == i.id).one()
         name = session.query(User).filter(User.id == i.user_id).one()
 
-        text = f"имя - {name.name} {dinner.first_course}, {dinner.second_course}"
-        await bot.send_message(message.chat.id, f"{text}{i.dinner}")
+        text = f"имя - {name.name} СУП {dinner.first_course}, ВТОРОЕ {dinner.second_course}"
+        await bot.send_message(message.chat.id, f"{text} СУЩЕСТВУЕТ ЛИ ВАЩЕ ОБЭД{i.dinner}")
 
 
 @dispatcher.message_handler(commands=['show_who_eating'])
