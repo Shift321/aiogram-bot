@@ -454,7 +454,7 @@ async def bug_fix(message: Message):
     rus_week_day = check_week_day(weekday)
     eat_dinner = session.query(Food).filter(Food.name_of_week_day == rus_week_day, Food.dinner == True).all()
     for i in eat_dinner:
-        await bot.send_message(message.chat.id, i)
+        await bot.send_message(message.chat.id, i.dinner)
 
 
 @dispatcher.message_handler(commands=['show_who_eating'])
