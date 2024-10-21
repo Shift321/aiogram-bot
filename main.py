@@ -598,7 +598,6 @@ async def poll_answer_handler(poll_answer: PollAnswer):
         if poll_answer.option_ids == [7]:
             no_second_course(user)
         else:
-            print("I AM HERE")
             second_course_help(poll_answer, user)
     foods = session.query(Food).filter(Food.user_id == user.id).all()
     for i in foods:
