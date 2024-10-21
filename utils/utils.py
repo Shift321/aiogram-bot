@@ -68,31 +68,35 @@ def first_course_help(poll_answer, user):
         session.commit()
 
     for i in poll_answer.option_ids:
-        foods_check_first = session.query(Food).filter(Food.name_of_week_day == choices[str(i)],
-                                                       Food.user_id == user.id).all()
-        if len(foods_check_first) == 0:
-            foods_check_first = Food(name_of_week_day=choices[str(i)], user_id=user.id, dinner=True)
-            session.add(foods_check_first)
-            session.commit()
-        else:
-            foods_check_first[0].dinner = True
-            session.flush()
-            session.commit()
-        food = session.query(Food).filter(Food.name_of_week_day == choices[str(i)],
-                                          Food.user_id == user.id).one()
-        check_dinners = session.query(Dinner).filter(Dinner.food_id == food.id).all()
-        for dinner in check_dinners:
-            dinner.first_course = False
-            session.flush()
-            session.commit()
-        if len(check_dinners) == 0:
-            dinner = Dinner(food_id=food.id, first_course=True)
-            session.add(dinner)
-            session.commit()
-        else:
-            check_dinners[0].first_course = True
-            session.flush()
-            session.commit()
+        try:
+            foods_check_first = session.query(Food).filter(Food.name_of_week_day == choices[str(i)],
+                                                           Food.user_id == user.id).all()
+            if len(foods_check_first) == 0:
+                foods_check_first = Food(name_of_week_day=choices[str(i)], user_id=user.id, dinner=True)
+                session.add(foods_check_first)
+                session.commit()
+            else:
+                foods_check_first[0].dinner = True
+                session.flush()
+                session.commit()
+            food = session.query(Food).filter(Food.name_of_week_day == choices[str(i)],
+                                              Food.user_id == user.id).one()
+            check_dinners = session.query(Dinner).filter(Dinner.food_id == food.id).all()
+            for dinner in check_dinners:
+                dinner.first_course = False
+                session.flush()
+                session.commit()
+            if len(check_dinners) == 0:
+                dinner = Dinner(food_id=food.id, first_course=True)
+                session.add(dinner)
+                session.commit()
+            else:
+                check_dinners[0].first_course = True
+                session.flush()
+                session.commit()
+        except KeyError:
+            print("all good we keep going")
+            pass
 
 
 def second_course_help(poll_answer, user):
@@ -108,31 +112,35 @@ def second_course_help(poll_answer, user):
         session.commit()
 
     for i in poll_answer.option_ids:
-        foods_check_first = session.query(Food).filter(Food.name_of_week_day == choices[str(i)],
-                                                       Food.user_id == user.id).all()
-        if len(foods_check_first) == 0:
-            foods_check_first = Food(name_of_week_day=choices[str(i)], user_id=user.id, dinner=True)
-            session.add(foods_check_first)
-            session.commit()
-        else:
-            foods_check_first[0].dinner = True
-            session.flush()
-            session.commit()
-        food = session.query(Food).filter(Food.name_of_week_day == choices[str(i)],
-                                          Food.user_id == user.id).one()
-        check_dinners = session.query(Dinner).filter(Dinner.food_id == food.id).all()
-        for dinner in check_dinners:
-            dinner.second_course = False
-            session.flush()
-            session.commit()
-        if len(check_dinners) == 0:
-            dinner = Dinner(food_id=food.id, second_course=True)
-            session.add(dinner)
-            session.commit()
-        else:
-            check_dinners[0].second_course = True
-            session.flush()
-            session.commit()
+        try:
+            foods_check_first = session.query(Food).filter(Food.name_of_week_day == choices[str(i)],
+                                                           Food.user_id == user.id).all()
+            if len(foods_check_first) == 0:
+                foods_check_first = Food(name_of_week_day=choices[str(i)], user_id=user.id, dinner=True)
+                session.add(foods_check_first)
+                session.commit()
+            else:
+                foods_check_first[0].dinner = True
+                session.flush()
+                session.commit()
+            food = session.query(Food).filter(Food.name_of_week_day == choices[str(i)],
+                                              Food.user_id == user.id).one()
+            check_dinners = session.query(Dinner).filter(Dinner.food_id == food.id).all()
+            for dinner in check_dinners:
+                dinner.second_course = False
+                session.flush()
+                session.commit()
+            if len(check_dinners) == 0:
+                dinner = Dinner(food_id=food.id, second_course=True)
+                session.add(dinner)
+                session.commit()
+            else:
+                check_dinners[0].second_course = True
+                session.flush()
+                session.commit()
+        except KeyError:
+            print("all good we keep going")
+            pass
 
 
 def breakfast_help(poll_answer, user):
