@@ -149,16 +149,19 @@ def breakfast_help(poll_answer, user):
         session.commit()
 
     for i in poll_answer.option_ids:
-        foods_check = session.query(Food).filter(Food.name_of_week_day == choices[str(i)],
-                                                 Food.user_id == user.id).all()
-        if len(foods_check) == 0:
-            food_add = Food(name_of_week_day=choices[str(i)], user_id=user.id, breakfast=True)
-            session.add(food_add)
-            session.commit()
-        else:
-            foods_check[0].breakfast = True
-            session.flush()
-            session.commit()
+        try:
+            foods_check = session.query(Food).filter(Food.name_of_week_day == choices[str(i)],
+                                                     Food.user_id == user.id).all()
+            if len(foods_check) == 0:
+                food_add = Food(name_of_week_day=choices[str(i)], user_id=user.id, breakfast=True)
+                session.add(food_add)
+                session.commit()
+            else:
+                foods_check[0].breakfast = True
+                session.flush()
+                session.commit()
+        except KeyError:
+            pass
 
 
 def no_breakfast(user):
