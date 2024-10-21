@@ -447,6 +447,16 @@ async def services(message: Message):
         await bot.send_message(message.chat.id, messages['not_registered'])
 
 
+@dispatcher.message_handler(commands=['bug_fix'])
+async def bug_fix(message: Message):
+    today = datetime.datetime.now().date()
+    weekday = today.strftime("%A")
+    rus_week_day = check_week_day(weekday)
+    eat_dinner = session.query(Food).filter(Food.name_of_week_day == rus_week_day, Food.dinner == True).all()
+    for i in eat_dinner:
+        await bot.send_message(message.chat.id, i)
+
+
 @dispatcher.message_handler(commands=['show_who_eating'])
 async def show_who_eating(message: Message):
     if is_register(message):
