@@ -95,7 +95,6 @@ def first_course_help(poll_answer, user):
                 session.flush()
                 session.commit()
         except KeyError:
-            print("all good we keep going")
             pass
 
 
@@ -139,7 +138,6 @@ def second_course_help(poll_answer, user):
                 session.flush()
                 session.commit()
         except KeyError:
-            print("all good we keep going")
             pass
 
 
